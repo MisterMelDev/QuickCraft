@@ -37,7 +37,7 @@ public class Events implements Listener {
 		}
 		if(e.getLine(1).equals("Join")) {
 			if(e.getLine(2) == null) {
-				p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "Please enter a arena name on the third line.");
+				p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "Please enter an arena name on the third line.");
 				e.setCancelled(true);
 				return;
 			}
@@ -77,7 +77,7 @@ public class Events implements Listener {
 								e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This game is currently not joinable!");
 							}
 						} else {
-							e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This arena isnt enabled.");
+							e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This arena isn't enabled.");
 						}
 					}
 					if(s.getLine(1).equals(ChatColor.RED + "Leave")) {
