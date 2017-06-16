@@ -1,26 +1,45 @@
 package nl.mistermel.quickcraft.utils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import nl.mistermel.quickcraft.Arena;
 import nl.mistermel.quickcraft.QuickCraft;
 
-public class ArenaManager {
+public class ArenaManager implements Runnable {
 	
 	private Map<String, Arena> arenas = new HashMap<String, Arena>();
+	private Random r = new Random();
+	
+	private List<Material> items = Arrays.asList(Material.IRON_PICKAXE, Material.IRON_HELMET, Material.IRON_CHESTPLATE,
+			Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.ARMOR_STAND, Material.CAKE, Material.ARROW);
 	
 	private FileConfiguration data;
 	
 	public ArenaManager() {
 		data = QuickCraft.getConfigManager().getDataFile();
 		refreshConfig();
+	}
+	
+	@Override
+	public void run() {
+		for(Arena arena : arenas.values()) {
+			arena.tick();
+		}
+	}
+	
+	public Material getRandomMaterial() {
+		return items.get(r.nextInt(items.size()));
 	}
 	
 	public void refreshConfig() {
@@ -50,6 +69,11 @@ public class ArenaManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean join(String name, Player p) {
+		Arena arena = arenas.get(name);
+		return arena.join(p);
 	}
 	
 	public void createArena(String name) {

@@ -24,6 +24,8 @@ public class QuickCraft extends JavaPlugin {
 		arenaManager = new ArenaManager();
 		
 		getServer().getPluginManager().registerEvents(new Events(), this);
+		
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, arenaManager, 0, 20);
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -40,6 +42,8 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.AQUA + "+----------=Commands=----------+");
 				sender.sendMessage(ChatColor.GOLD + "/quickcraft or /qc" + ChatColor.GRAY + " - Main command.");
 				sender.sendMessage(ChatColor.GOLD + "/qc help" + ChatColor.GRAY + " - Shows this message.");
+				sender.sendMessage(ChatColor.GOLD + "/qc join <Name>" + ChatColor.GRAY + " - Join a game.");
+				sender.sendMessage(ChatColor.GOLD + "/qc join <Name>" + ChatColor.GRAY + " - Leave a game.");
 				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles a arena.");
@@ -123,6 +127,27 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				arenaManager.refreshConfig();
+			}
+			if(args[0].equalsIgnoreCase("join")) {
+				if(!(sender instanceof Player)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used by players!");
+					return true;
+				}
+				Player p = (Player) sender;
+				if(args.length == 1) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc join <Name>");
+					return true;
+				}
+				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+				if(!arenaManager.join(args[1], p)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This game is currently not joinable.");
+				} else {
+					sender.sendMessage(PREFIX + ChatColor.GOLD + "Joined game!");
+				}
+				return true;
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
 		}

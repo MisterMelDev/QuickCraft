@@ -2,7 +2,7 @@ package nl.mistermel.quickcraft.utils;
 
 public enum GameState {
 	
-	IN_LOBBY("In Lobby", true), IN_GAME("In Game", false), RESETTING("Resetting", false);
+	WAITING("Waiting for Players", true), STARTING("Starting", true), IN_GAME("In Game", false), RESETTING("Resetting", false);
 	
 	private String displayText;
 	private boolean joinable;
