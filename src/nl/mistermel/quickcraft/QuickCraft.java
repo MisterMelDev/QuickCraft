@@ -22,6 +22,8 @@ public class QuickCraft extends JavaPlugin {
 		
 		configManager = new ConfigManager();
 		arenaManager = new ArenaManager();
+		
+		getServer().getPluginManager().registerEvents(new Events(), this);
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -40,6 +42,7 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/qc help" + ChatColor.GRAY + " - Shows this message.");
 				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles a arena.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
 				return true;
 			}
@@ -79,7 +82,35 @@ public class QuickCraft extends JavaPlugin {
 				}
 				Player p = (Player) sender;
 				arenaManager.setLobby(args[1], p.getLocation());
-				sender.sendMessage(PREFIX + ChatColor.GOLD + "Spawn set!");
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Lobby set!");
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("toggle")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length == 1) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc toggle <Name>");
+					return true;
+				}
+				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+				boolean toggled = arenaManager.isEnabled(args[1]);
+				if(toggled) {
+					arenaManager.setEnabled(args[1], false);
+					sender.sendMessage(PREFIX + ChatColor.GOLD + "Arena disabled.");
+				} else {
+					if(!arenaManager.isCompleted(args[1])) {
+						sender.sendMessage(PREFIX + ChatColor.RED + "This arena isnt completed yet!");
+						return true;
+					}
+					arenaManager.setEnabled(args[1], true);
+					sender.sendMessage(PREFIX + ChatColor.GOLD + "Arena enabled.");
+				}
+				return true;
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
 		}
@@ -88,6 +119,10 @@ public class QuickCraft extends JavaPlugin {
 	
 	public static ConfigManager getConfigManager() {
 		return configManager;
+	}
+	
+	public static ArenaManager getArenaManager() {
+		return arenaManager;
 	}
 	
 	public static QuickCraft getInstance() {
