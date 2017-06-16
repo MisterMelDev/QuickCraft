@@ -43,6 +43,7 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles a arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc reload" + ChatColor.GRAY + "- Reloads the plugin.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
 				return true;
 			}
@@ -61,6 +62,10 @@ public class QuickCraft extends JavaPlugin {
 				}
 				arenaManager.createArena(args[1]);
 				sender.sendMessage(PREFIX + ChatColor.GOLD + "Arena created!");
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Things you should do now:");
+				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Set the lobby. /qc setlobby " + args[1]);
+				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Set the spawn. /qc setspawn " + args[1]);
+				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Enable the arena. /qc toggle " + args[1]);
 				return true;
 			}
 			if(args[0].equalsIgnoreCase("setlobby")) {
@@ -111,6 +116,13 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + ChatColor.GOLD + "Arena enabled.");
 				}
 				return true;
+			}
+			if(args[0].equalsIgnoreCase("reload")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				arenaManager.refreshConfig();
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
 		}

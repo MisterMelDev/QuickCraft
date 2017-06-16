@@ -30,6 +30,10 @@ public class ConfigManager {
 		}
 	}
 	
+	public File getData() {
+		return dataFile;
+	}
+	
 	public FileConfiguration getDataFile() {
 		return data;
 	}

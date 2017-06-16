@@ -68,22 +68,7 @@ public class Events implements Listener {
 		if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND && e.hasBlock()) {
 			if(e.getClickedBlock().getType() == Material.WALL_SIGN || e.getClickedBlock().getType() == Material.SIGN_POST) {
 				Sign s = (Sign) e.getClickedBlock().getState();
-				if(s.getLine(0).equals(ChatColor.AQUA + "QuickCraft")) {
-					if(s.getLine(1).equals(ChatColor.GOLD + "Join")) {
-						if(arenaManager.isEnabled(ChatColor.stripColor(s.getLine(2)))) {
-							if(arenaManager.getStatus(ChatColor.stripColor(s.getLine(2))).isJoinable()) {
-								//JOIN
-							} else {
-								e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This game is currently not joinable!");
-							}
-						} else {
-							e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This arena isnt enabled.");
-						}
-					}
-					if(s.getLine(1).equals(ChatColor.RED + "Leave")) {
-						//LEAVE
-					}
-				}
+				
 			}
 		}
 	}
