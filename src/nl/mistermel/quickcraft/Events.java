@@ -37,7 +37,7 @@ public class Events implements Listener {
 		}
 		if(e.getLine(1).equals("Join")) {
 			if(e.getLine(2) == null) {
-				p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "Please enter a arena name on the third line.");
+				p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "Please enter an arena name on the third line.");
 				e.setCancelled(true);
 				return;
 			}
