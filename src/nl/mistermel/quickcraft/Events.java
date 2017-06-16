@@ -1,9 +1,14 @@
 package nl.mistermel.quickcraft;
 
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import net.md_5.bungee.api.ChatColor;
 import nl.mistermel.quickcraft.utils.ArenaManager;
@@ -52,7 +57,34 @@ public class Events implements Listener {
 			p.sendMessage(QuickCraft.PREFIX + ChatColor.GOLD + "Join sign created.");
 		}
 		if(e.getLine(1).equals("Leave")) {
+			e.setLine(0, ChatColor.AQUA + "QuickCraft");
+			e.setLine(1, ChatColor.RED + "Leave");
 			p.sendMessage(QuickCraft.PREFIX + ChatColor.GOLD + "Leave sign created.");
+		}
+	}
+	
+	@EventHandler
+	public void onInteract(PlayerInteractEvent e) {
+		if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND && e.hasBlock()) {
+			if(e.getClickedBlock().getType() == Material.WALL_SIGN || e.getClickedBlock().getType() == Material.SIGN_POST) {
+				Sign s = (Sign) e.getClickedBlock().getState();
+				if(s.getLine(0).equals(ChatColor.AQUA + "QuickCraft")) {
+					if(s.getLine(1).equals(ChatColor.GOLD + "Join")) {
+						if(arenaManager.isEnabled(ChatColor.stripColor(s.getLine(2)))) {
+							if(arenaManager.getStatus(ChatColor.stripColor(s.getLine(2))).isJoinable()) {
+								//JOIN
+							} else {
+								e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This game is currently not joinable!");
+							}
+						} else {
+							e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This arena isnt enabled.");
+						}
+					}
+					if(s.getLine(1).equals(ChatColor.RED + "Leave")) {
+						//LEAVE
+					}
+				}
+			}
 		}
 	}
 	

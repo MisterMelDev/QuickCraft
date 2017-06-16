@@ -31,6 +31,14 @@ public class ArenaManager {
 		return data.getBoolean("arenas." + name + ".enabled");
 	}
 	
+	public GameStatus getStatus(String name) {
+		return GameStatus.valueOf(data.getString("arenas." + name + ".status"));
+	}
+	
+	public void setStatus(String name, GameStatus status) {
+		data.set("arenas." + name + ".status", status.toString());
+	}	
+	
 	public void setEnabled(String name, boolean toggled) {
 		data.set("arenas." + name + ".enabled", toggled);
 	}
