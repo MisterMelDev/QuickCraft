@@ -2,6 +2,7 @@ package nl.mistermel.quickcraft;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.md_5.bungee.api.ChatColor;
@@ -38,10 +39,15 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/quickcraft or /qc" + ChatColor.GRAY + " - Main command.");
 				sender.sendMessage(ChatColor.GOLD + "/qc help" + ChatColor.GRAY + " - Shows this message.");
 				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
 				return true;
 			}
 			if(args[0].equalsIgnoreCase("create")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
 				if(args.length == 1) {
 					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc create <Name>");
 					return true;
@@ -53,6 +59,27 @@ public class QuickCraft extends JavaPlugin {
 				arenaManager.createArena(args[1]);
 				sender.sendMessage(PREFIX + ChatColor.GOLD + "Arena created!");
 				return true;
+			}
+			if(args[0].equalsIgnoreCase("setlobby")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length == 1) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setlobby <Name>");
+					return true;
+				}
+				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+				if(!(sender instanceof Player)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					return true;
+				}
+				Player p = (Player) sender;
+				arenaManager.setLobby(args[1], p.getLocation());
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Spawn set!");
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
 		}
