@@ -1,0 +1,10 @@
+name: QuickCraft
+version: 1.0
+main: nl.msitermel.quickcraft.QuickCraft
+authors: [MisterMel, rens4000]
+description: Minigame. Quickly craft the item that is needed!
+commands:
+  quickcraft:
+    description: The main command of QuickCraft.
+    usage: /quickcraft OR /qc
+    aliases: ['qc']
