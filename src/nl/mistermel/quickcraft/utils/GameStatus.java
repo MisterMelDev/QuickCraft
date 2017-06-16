@@ -2,7 +2,7 @@ package nl.mistermel.quickcraft.utils;
 
 public enum GameStatus {
 	
-	IN_LOBBY("In Lobby", true), IN_GAME("In Game", false);
+	IN_LOBBY("In Lobby", true), IN_GAME("In Game", false), RESETTING("Resetting", false);
 	
 	private String displayText;
 	private boolean joinable;

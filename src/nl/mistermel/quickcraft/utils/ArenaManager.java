@@ -1,4 +1,4 @@
-package nl.mistermel.quickcraft.utils;
+	package nl.mistermel.quickcraft.utils;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
