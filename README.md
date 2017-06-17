@@ -1,2 +1,3 @@
 # QuickCraft
-In develeopment. Minecraft Minigame. Craft the items as fast as possbile!
+QuickCraft is a Minecraft minigame in which you have to craft a randomly generated item as fast as possible.
+Its currently in develeopment and in a non-working state. Soon to be published on Spigot & Bukkit.
