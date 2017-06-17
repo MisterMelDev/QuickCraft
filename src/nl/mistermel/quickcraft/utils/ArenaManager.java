@@ -41,6 +41,24 @@ public class ArenaManager implements Runnable, Listener {
 		}
 	}
 	
+	public Arena getArena(Player p) {
+		for(Arena arena : arenas.values()) {
+			if(arena.inGame(p)) {
+				return arena;
+			}
+		}
+		return null;
+	}
+	
+	public boolean isInGame(Player p) {
+		for(Arena arena : arenas.values()) {
+			if(arena.inGame(p)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@EventHandler
 	public void onPlayerCraft(CraftItemEvent e) {
 		Player p = (Player) e.getWhoClicked();
@@ -94,14 +112,17 @@ public class ArenaManager implements Runnable, Listener {
 	public void createArena(String name) {
 		Location emptyLoc = new Location(null, 0, 0, 0);
 		arenas.put(name, new Arena(emptyLoc, emptyLoc, false));
+		save();
 	}
 	
 	public void setLobby(String name, Location loc) {
 		arenas.get(name).setLobbyLocation(loc);
+		save();
 	}
 	
 	public void setSpawn(String name, Location loc) {
 		arenas.get(name).setSpawnLocation(loc);
+		save();
 	}
 	
 	public boolean exists(String name) {

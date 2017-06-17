@@ -26,9 +26,9 @@ public class Arena {
 	private boolean enabled;
 	private BukkitScheduler scheduler;
 	
-	private boolean crafted = false;
-	
 	private List<UUID> players = new ArrayList<UUID>();
+	
+	private List<UUID> crafted = new ArrayList<UUID>();
 	
 	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled) {
 		this.lobbyLoc = lobbyLoc;
@@ -93,12 +93,32 @@ public class Arena {
 	
 	public void crafted(Player p) {
 		if(state != GameState.IN_GAME) return;
-		if(!crafted) {
-			crafted = true;
-			sendMessage(ChatColor.DARK_AQUA + p.getName() + ChatColor.GOLD + " was the fastest crafter!");
-		} else {
-			sendMessage(ChatColor.DARK_AQUA + p.getName() + ChatColor.GOLD + " has crafted the item!");
+		if(hasCraftedItem(p)) return;
+		p.getInventory().clear();
+		p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item!");
+		crafted.add(p.getUniqueId());
+		
+		if(crafted.size() >= players.size()) {
+			sendMessage(ChatColor.DARK_AQUA + "Everybody finished!");
+			sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(crafted.get(0)));
+			sendMessage(ChatColor.GREEN + "2: " + Bukkit.getPlayer(crafted.get(1)));
+			sendMessage(ChatColor.DARK_GRAY + "3: " + Bukkit.getPlayer(crafted.get(2)));
+			for(UUID u : players) {
+				Player p2 = Bukkit.getPlayer(u);
+				int i = 0;
+				for(UUID u2 : crafted) {
+					i++;
+					if(u2.equals(u)) {
+						break;
+					}
+				}
+				p2.sendMessage(ChatColor.GREEN + "You came " + ChatColor.DARK_AQUA + i + ChatColor.GREEN + "st");
+			}
 		}
+	}
+	
+	public boolean hasCraftedItem(Player p) {
+		return crafted.contains(p.getUniqueId());
 	}
 	
 	public List<Player> getPlayers() {
@@ -126,13 +146,21 @@ public class Arena {
 		return true;
 	}
 	
+	
+	public void leave(Player p) {
+		p.teleport(QuickCraft.getConfigManager().getMainLobby());
+		p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "You left the game.");
+		players.remove(p.getUniqueId());
+	}
+	
 	public void reset() {
 		for(UUID u : players) {
 			Player p = Bukkit.getPlayer(u);
 			leave(p);
 		}
 		countdown = 30;
-		crafted = false;
+		players.clear();
+		crafted.clear();
 		mat = QuickCraft.getArenaManager().getRandomMaterial();
 	}
 	
@@ -185,10 +213,6 @@ public class Arena {
 	
 	public boolean inGame(Player p) {
 		return players.contains(p.getUniqueId());
-	}
-	
-	public void leave(Player p) {
-		players.remove(p.getUniqueId());
 	}
 	
 	public GameState getState() {

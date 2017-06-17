@@ -47,6 +47,7 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/qc join <Name>" + ChatColor.GRAY + " - Leave a game.");
 				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setmainlobby" + ChatColor.GRAY + " - Sets the main lobby.");
 				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc reload" + ChatColor.GRAY + "- Reloads the plugin.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
@@ -149,6 +150,19 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + ChatColor.GOLD + "Joined game!");
 				}
 				return true;
+			}
+			if(args[0].equalsIgnoreCase("setmainlobby")) {
+				if(!(sender instanceof Player)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used by players!");
+					return true;
+				}
+				Player p = (Player) sender;
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				configManager.setMainLobby(p.getLocation());
+				p.sendMessage(PREFIX + ChatColor.GOLD + "Main lobby set!");
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
 		}
