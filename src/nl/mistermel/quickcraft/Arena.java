@@ -7,7 +7,9 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import net.md_5.bungee.api.ChatColor;
 import nl.mistermel.quickcraft.utils.GameState;
@@ -17,16 +19,14 @@ public class Arena {
 	private Location lobbyLoc;
 	private Location spawnLoc;
 	private GameState state;
-	
 	private Material mat = QuickCraft.getArenaManager().getRandomMaterial();
-	
+	private QuickCraft pl = QuickCraft.getInstance();
 	private int minPlayers = 2, maxPlayers = 10;
-	
 	private int countdown = 30;
+	private boolean enabled;
+	private BukkitScheduler scheduler;
 	
 	private List<UUID> players = new ArrayList<UUID>();
-	
-	private boolean enabled;
 	
 	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled) {
 		this.lobbyLoc = lobbyLoc;
@@ -34,6 +34,7 @@ public class Arena {
 		this.enabled = enabled;
 		
 		this.state = GameState.WAITING;
+		this.scheduler = Bukkit.getServer().getScheduler();
 	}
 	
 	public void tick() {
@@ -43,9 +44,43 @@ public class Arena {
 			if(countdown <= 0) {
 				state = GameState.IN_GAME;
 				sendMessage(ChatColor.GOLD + "The game is starting!");
-				sendMessage(ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
 				setExp(0);
 				teleport(spawnLoc);
+				
+				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+					public void run() {
+						sendTitle(ChatColor.GREEN + "3", ChatColor.GOLD + "Get ready to craft!");
+					}
+				}, 20);
+				
+				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+					public void run() {
+						sendTitle(ChatColor.YELLOW + "2", ChatColor.GOLD + "Get ready to craft!");
+					}
+				}, 40);
+				
+				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+					public void run() {
+						sendTitle(ChatColor.YELLOW + "1", ChatColor.GOLD + "Get ready to craft!");
+					}
+				}, 60);
+				
+				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+					public void run() {
+						sendTitle(ChatColor.GREEN + "GO!", ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
+						sendMessage(ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
+					}
+				}, 60);
+				
+				return;
+			}
+			if(countdown % 10 == 0) {
+				sendMessage(ChatColor.GOLD + "The game will start in " + ChatColor.DARK_AQUA + countdown + ChatColor.GOLD + " seconds");
+				makeSound(Sound.BLOCK_NOTE_PLING);
+			}
+			if(countdown <= 5) {
+				sendMessage(ChatColor.GOLD + "The game will start in " + ChatColor.DARK_AQUA + countdown + ChatColor.GOLD + " seconds");
+				makeSound(Sound.BLOCK_NOTE_PLING);
 			}
 		}
 	}
@@ -80,8 +115,22 @@ public class Arena {
 			Player p = Bukkit.getPlayer(u);
 			leave(p);
 		}
-		countdown = 60;
+		countdown = 30;
 		mat = QuickCraft.getArenaManager().getRandomMaterial();
+	}
+	
+	public void makeSound(Sound sound) {
+		for(UUID u : players) {
+			Player p = Bukkit.getPlayer(u);
+			p.playSound(p.getLocation(), sound, 1, 1);
+		}
+	}
+	
+	public void sendTitle(String title, String subTitle) {
+		for(UUID u : players) {
+			Player p = Bukkit.getPlayer(u);
+			p.sendTitle(title, subTitle, 5, 20, 10);
+		}
 	}
 	
 	public void sendMessage(String message) {
