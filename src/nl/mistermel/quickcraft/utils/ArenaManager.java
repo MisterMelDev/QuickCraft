@@ -43,6 +43,22 @@ public class ArenaManager implements Runnable, Listener {
 		}
 	}
 	
+	public void setSign(Location loc, String name) {
+		data.set("arenas." + name + ".sign.world", loc.getWorld().getName());
+		data.set("arenas." + name + ".sign.world", loc.getBlockX());
+		data.set("arenas." + name + ".sign.world", loc.getBlockY());
+		data.set("arenas." + name + ".sign.world", loc.getBlockZ());
+		QuickCraft.getConfigManager().save();
+	}
+	
+	public Location getSign(String name) {
+		return new Location(Bukkit.getWorld(data.getString("arenas." + name + ".sign.world")), data.getInt("arenas." + name + ".sign.x"), data.getInt("arenas." + name + ".sign.y"), data.getInt("arenas." + name + ".sign.z"));
+	}
+	
+	public boolean signCreated(String name) {
+		return data.contains("arenas." + name + ".sign");
+	}
+	
 	public Arena getArena(Player p) {
 		for(Arena arena : arenas.values()) {
 			if(arena.inGame(p)) {
@@ -50,6 +66,10 @@ public class ArenaManager implements Runnable, Listener {
 			}
 		}
 		return null;
+	}
+	
+	public Arena getArena(String name) {
+		return arenas.get(name);
 	}
 	
 	public boolean isInGame(Player p) {

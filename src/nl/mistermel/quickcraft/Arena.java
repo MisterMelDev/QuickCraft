@@ -32,11 +32,11 @@ public class Arena {
 	private boolean enabled;
 	private BukkitScheduler scheduler;
 	private ConfigManager configManager;
+	private ArenaManager arenaManager;
 
 	private Scoreboard board;
 	private Objective obj;
 
-	@SuppressWarnings("unused")
 	private String name;
 
 	private List<UUID> players = new ArrayList<UUID>();
@@ -48,8 +48,12 @@ public class Arena {
 		this.spawnLoc = spawnLoc;
 		this.enabled = enabled;
 		this.name = name;
+		this.arenaManager = arenaManager;
 
 		this.state = GameState.WAITING;
+		if(arenaManager.signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+		}
 		this.scheduler = Bukkit.getServer().getScheduler();
 		this.configManager = QuickCraft.getConfigManager();
 		this.mat = arenaManager.getRandomMaterial();
@@ -98,6 +102,9 @@ public class Arena {
 			setExp(countdown);
 			if (countdown <= 0) {
 				state = GameState.IN_GAME;
+				if(arenaManager.signCreated(name)) {
+					QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+				}
 				sendMessage(ChatColor.GOLD + "The game is starting!");
 				for (String score : board.getEntries()) {
 					board.resetScores(score);
@@ -233,6 +240,9 @@ public class Arena {
 		if (state == GameState.WAITING) {
 			if (players.size() >= minPlayers) {
 				state = GameState.STARTING;
+				if(arenaManager.signCreated(name)) {
+					QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+				}
 				sendMessage(ChatColor.GOLD + "Starting countdown!");
 			}
 		}
@@ -251,6 +261,9 @@ public class Arena {
 
 	public void reset() {
 		this.state = GameState.RESETTING;
+		if(arenaManager.signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+		}
 		for (int i = 0; i < players.size(); i++) {
 			Player p = Bukkit.getPlayer(players.get(i));
 			p.teleport(configManager.getMainLobby());
@@ -260,6 +273,9 @@ public class Arena {
 		crafted.clear();
 		mat = QuickCraft.getArenaManager().getRandomMaterial();
 		this.state = GameState.WAITING;
+		if(arenaManager.signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+		}
 	}
 
 	public void makeSound(Sound sound) {
@@ -303,6 +319,14 @@ public class Arena {
 			Player p = Bukkit.getPlayer(u);
 			p.teleport(loc);
 		}
+	}
+	
+	public int getMaxPlayers() {
+		return maxPlayers;
+	}
+	
+	public int getMinPlayers() {
+		return minPlayers;
 	}
 
 	public boolean isEnabled() {

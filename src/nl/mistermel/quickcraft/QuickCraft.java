@@ -1,5 +1,10 @@
 package nl.mistermel.quickcraft;
 
+import java.util.HashSet;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,12 +13,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.md_5.bungee.api.ChatColor;
 import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
+import nl.mistermel.quickcraft.utils.SignManager;
 
 public class QuickCraft extends JavaPlugin {
 	
 	private static QuickCraft instance;
 	private static ConfigManager configManager;
 	private static ArenaManager arenaManager;
+	private static SignManager signManager;
 	
 	public static final String PREFIX = ChatColor.AQUA + "QuickCraft" + ChatColor.GRAY + " >> ";
 	
@@ -22,9 +29,11 @@ public class QuickCraft extends JavaPlugin {
 		
 		configManager = new ConfigManager();
 		arenaManager = new ArenaManager();
+		signManager = new SignManager();
 		
 		getServer().getPluginManager().registerEvents(new Events(), this);
 		getServer().getPluginManager().registerEvents(arenaManager, this);
+		getServer().getPluginManager().registerEvents(new SignManager(), this);
 		
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, arenaManager, 0, 20);
 	}
@@ -37,6 +46,7 @@ public class QuickCraft extends JavaPlugin {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("quickcraft")) {
 			if(args.length == 0) {
@@ -57,6 +67,8 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setspawn <Name>" + ChatColor.GRAY + " - Sets the spawn of a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setmainlobby" + ChatColor.GRAY + " - Sets the main lobby.");
+				sender.sendMessage(ChatColor.GOLD + "/qc createsign <Name>" + ChatColor.GRAY + " - Creates a join sign.");
+				sender.sendMessage(ChatColor.GOLD + "/qc leavesign" + ChatColor.GRAY + " - Creates a leave sign.");
 				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc reload" + ChatColor.GRAY + "- Reloads the plugin.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
@@ -277,9 +289,80 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(PREFIX + ChatColor.GOLD + "Maximum players set.");
 				return true;
 			}
+			if(args[0].equalsIgnoreCase("createsign")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length == 1) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc createsign <Name>");
+					return true;
+				}
+				if(!(sender instanceof Player)) {
+					sender.sendMessage(ChatColor.RED + "This command can only be used by players!");
+					return true;
+				}
+ 				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+ 				Player p = (Player) sender;
+ 				Block b = p.getTargetBlock((HashSet<Byte>) null, 5);
+ 				if(b == null) {
+ 					sender.sendMessage(PREFIX + ChatColor.RED + "Please look at a block.");
+ 					return true;
+ 				}
+ 				if(b.getType() != Material.WALL_SIGN && b.getType() != Material.SIGN_POST) {
+ 					sender.sendMessage(PREFIX + ChatColor.RED + "Please look at a sign.");
+ 					return true;
+ 				}
+ 				if(arenaManager.signCreated(args[1])) {
+ 					sender.sendMessage(PREFIX + ChatColor.RED + "There is already a sign for this arena.");
+ 					return true;
+ 				}
+ 				signManager.updateSign(b.getLocation(), args[1]);
+ 				sender.sendMessage(PREFIX + ChatColor.GOLD + "Sign created.");
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("leavesign")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length == 1) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc createsign <Name>");
+					return true;
+				}
+				if(!(sender instanceof Player)) {
+					sender.sendMessage(ChatColor.RED + "This command can only be used by players!");
+					return true;
+				}
+ 				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+ 				Player p = (Player) sender;
+ 				Block b = p.getTargetBlock((HashSet<Byte>) null, 5);
+ 				if(b == null) {
+ 					sender.sendMessage(PREFIX + ChatColor.RED + "Please look at a block.");
+ 					return true;
+ 				}
+ 				if(b.getType() != Material.WALL_SIGN && b.getType() != Material.SIGN_POST) {
+ 					sender.sendMessage(PREFIX + ChatColor.RED + "Please look at a sign.");
+ 					return true;
+ 				}
+ 				Sign s = (Sign) b.getState();
+ 				s.setLine(0, ChatColor.AQUA + "QuickCraft");
+ 				s.setLine(1, ChatColor.RED + "Leave");
+				return true;
+			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
 		}
 		return true;
+	}
+	
+	public static SignManager getSignManager() {
+		return signManager;
 	}
 	
 	public boolean validInt(String input) {

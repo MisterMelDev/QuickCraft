@@ -1,8 +1,10 @@
 package nl.mistermel.quickcraft.utils;
 
+import org.bukkit.ChatColor;
+
 public enum GameState {
 	
-	WAITING("Waiting for Players", true), STARTING("Starting", true), IN_GAME("In Game", false), RESETTING("Resetting", false);
+	WAITING(ChatColor.GREEN + "Waiting for Players", true), STARTING(ChatColor.GREEN + "Starting", true), IN_GAME(ChatColor.RED + "In Game", false), RESETTING(ChatColor.RED + "Resetting", false);
 	
 	private String displayText;
 	private boolean joinable;
