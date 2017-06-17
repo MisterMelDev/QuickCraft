@@ -1,6 +1,6 @@
 name: QuickCraft
 version: 1.0
-main: nl.msitermel.quickcraft.QuickCraft
+main: nl.mistermel.quickcraft.QuickCraft
 authors: [MisterMel, rens4000]
 description: Minigame. Quickly craft the item that is needed!
 commands:

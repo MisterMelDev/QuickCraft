@@ -29,6 +29,11 @@ public class ConfigManager {
 		data.set("lobby.x", loc.getBlockX());
 		data.set("lobby.y", loc.getBlockY());
 		data.set("lobby.z", loc.getBlockZ());
+		save();
+	}
+	
+	public boolean mainLobbySet() {
+		return data.contains("lobby");
 	}
 	
 	public Location getMainLobby() {

@@ -12,6 +12,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.GameState;
 
 public class Arena {
@@ -19,8 +20,8 @@ public class Arena {
 	private Location lobbyLoc;
 	private Location spawnLoc;
 	private GameState state;
-	private Material mat = QuickCraft.getArenaManager().getRandomMaterial();
-	private QuickCraft pl = QuickCraft.getInstance();
+	private Material mat;
+	private QuickCraft pl;
 	private int minPlayers = 2, maxPlayers = 10;
 	private int countdown = 30;
 	private boolean enabled;
@@ -30,13 +31,15 @@ public class Arena {
 	
 	private List<UUID> crafted = new ArrayList<UUID>();
 	
-	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled) {
+	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, ArenaManager arenaManager) {
 		this.lobbyLoc = lobbyLoc;
 		this.spawnLoc = spawnLoc;
 		this.enabled = enabled;
 		
 		this.state = GameState.WAITING;
 		this.scheduler = Bukkit.getServer().getScheduler();
+		this.mat = arenaManager.getRandomMaterial();
+		this.pl = QuickCraft.getInstance();
 	}
 	
 	public void tick() {
@@ -176,6 +179,14 @@ public class Arena {
 			Player p = Bukkit.getPlayer(u);
 			p.sendTitle(title, subTitle, 5, 20, 10);
 		}
+	}
+	
+	public void setMinPlayers(int amount) {
+		minPlayers = amount;
+	}
+	
+	public void setMaxPlayers(int amount) {
+		maxPlayers = amount;
 	}
 	
 	public void sendMessage(String message) {

@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 
+import net.md_5.bungee.api.ChatColor;
 import nl.mistermel.quickcraft.Arena;
 import nl.mistermel.quickcraft.QuickCraft;
 
@@ -76,28 +77,52 @@ public class ArenaManager implements Runnable, Listener {
 	}
 	
 	public void refreshConfig() {
-		arenas.clear();
+		save();
 		for(Arena arena : arenas.values()) {
 			for(Player p : arena.getPlayers()) {
 				arena.leave(p);
 			}
 		}
+		arenas.clear();
+		if(data.getConfigurationSection("arenas") == null)
+			data.createSection("arenas");
 		for(String key : data.getConfigurationSection("arenas").getKeys(false)) {
 			Location lobbyLoc = new Location(Bukkit.getWorld(data.getString("arenas." + key + ".lobby.world")), data.getInt("arenas." + key + ".lobby.x"), data.getInt("arenas." + key + ".lobby.y"), data.getInt("arenas." + key + ".lobby.z"));
 			Location spawnLoc = new Location(Bukkit.getWorld(data.getString("arenas." + key + ".spawn.world")), data.getInt("arenas." + key + ".spawn.x"), data.getInt("arenas." + key + ".spawn.y"), data.getInt("arenas." + key + ".spawn.z"));
-			Arena arena = new Arena(lobbyLoc, spawnLoc, data.getBoolean("arenas." + key + ".enabled"));
+			Arena arena = new Arena(lobbyLoc, spawnLoc, data.getBoolean("arenas." + key + ".enabled"), this);
 			arenas.put(key, arena);
 		}
 	}
 	
 	public void setEnabled(String name, boolean enabled) {
 		data.set("arenas." + name + ".enabled", enabled);
-		save();
-		arenas.get(name).setEnabled(enabled);
+		Arena arena = arenas.get(name);
+		arena.setEnabled(enabled);
+		for(Player p : arena.getPlayers()) {
+			p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "This arena has been disabled by a admin.");
+			arena.leave(p);
+		}
+		QuickCraft.getConfigManager().save();
 	}
 	
 	private void save() {
 		try {
+			for(String name : arenas.keySet()) {
+				Arena arena = arenas.get(name);
+				if(arena.getLobbyLocation() != null) {
+					data.set("arenas." + name + ".lobby.world", arena.getLobbyLocation().getWorld().getName());
+					data.set("arenas." + name + ".lobby.x", arena.getLobbyLocation().getX());
+					data.set("arenas." + name + ".lobby.y", arena.getLobbyLocation().getY());
+					data.set("arenas." + name + ".lobby.z", arena.getLobbyLocation().getZ());
+				}
+				if(arena.getSpawnLocation() != null) {
+					data.set("arenas." + name + ".spawn.world", arena.getSpawnLocation().getWorld().getName());
+					data.set("arenas." + name + ".spawn.x", arena.getSpawnLocation().getX());
+					data.set("arenas." + name + ".spawn.y", arena.getSpawnLocation().getY());
+					data.set("arenas." + name + ".spawn.z", arena.getSpawnLocation().getZ());
+				}
+				data.set("arenas." + name + ".enabled", arena.isEnabled());
+			}
 			data.save(QuickCraft.getConfigManager().getData());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -110,9 +135,17 @@ public class ArenaManager implements Runnable, Listener {
 	}
 	
 	public void createArena(String name) {
-		Location emptyLoc = new Location(null, 0, 0, 0);
-		arenas.put(name, new Arena(emptyLoc, emptyLoc, false));
+		Location emptyLoc = new Location(Bukkit.getWorld("world"), 0, 0, 0);
+		arenas.put(name, new Arena(emptyLoc, emptyLoc, false, this));
 		save();
+	}
+	
+	public void setMinPlayers(String name, int value) {
+		arenas.get(name).setMinPlayers(value);
+	}
+	
+	public void setMaxPlayers(String name, int value) {
+		arenas.get(name).setMaxPlayers(value);
 	}
 	
 	public void setLobby(String name, Location loc) {
@@ -132,7 +165,7 @@ public class ArenaManager implements Runnable, Listener {
 	public boolean isCompleted(String name) {
 		Location spawn = arenas.get(name).getSpawnLocation();
 		Location lobby = arenas.get(name).getLobbyLocation();
-		return spawn.getWorld() != null && lobby.getWorld() != null;
+		return spawn.getX() != 0 && spawn.getY() != 0 && spawn.getZ() != 0 && lobby.getX() != 0 && lobby.getY() != 0 && lobby.getZ() != 0;
 	}
 	
 	public boolean isEnabled(String name) {

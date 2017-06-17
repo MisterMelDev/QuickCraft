@@ -44,9 +44,10 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/quickcraft or /qc" + ChatColor.GRAY + " - Main command.");
 				sender.sendMessage(ChatColor.GOLD + "/qc help" + ChatColor.GRAY + " - Shows this message.");
 				sender.sendMessage(ChatColor.GOLD + "/qc join <Name>" + ChatColor.GRAY + " - Join a game.");
-				sender.sendMessage(ChatColor.GOLD + "/qc join <Name>" + ChatColor.GRAY + " - Leave a game.");
+				sender.sendMessage(ChatColor.GOLD + "/qc leave" + ChatColor.GRAY + " - Leave a game.");
 				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setspawn <Name>" + ChatColor.GRAY + " - Sets the spawn of a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setmainlobby" + ChatColor.GRAY + " - Sets the main lobby.");
 				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles a arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc reload" + ChatColor.GRAY + "- Reloads the plugin.");
@@ -60,6 +61,10 @@ public class QuickCraft extends JavaPlugin {
 				}
 				if(args.length == 1) {
 					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc create <Name>");
+					return true;
+				}
+				if(!configManager.mainLobbySet()) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Please set the main lobby first!");
 					return true;
 				}
 				if(arenaManager.exists(args[1])) {
@@ -91,9 +96,52 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
 					return true;
 				}
+				if(arenaManager.isEnabled(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					return true;
+				}
 				Player p = (Player) sender;
 				arenaManager.setLobby(args[1], p.getLocation());
 				sender.sendMessage(PREFIX + ChatColor.GOLD + "Lobby set!");
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("leave")) {
+				if(!(sender instanceof Player)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					return true;
+				}
+				Player p = (Player) sender;
+				if(!arenaManager.isInGame(p)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You aren't in a game!");
+					return true;
+				}
+				arenaManager.getArena(p).leave(p);
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("setspawn")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length == 1) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setspawn <Name>");
+					return true;
+				}
+				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+				if(!(sender instanceof Player)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					return true;
+				}
+				if(arenaManager.isEnabled(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					return true;
+				}
+				Player p = (Player) sender;
+				arenaManager.setSpawn(args[1], p.getLocation());
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Spawn set!");
 				return true;
 			}
 			if(args[0].equalsIgnoreCase("toggle")) {
@@ -129,6 +177,8 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				arenaManager.refreshConfig();
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Plugin reloaded.");
+				return true;
 			}
 			if(args[0].equalsIgnoreCase("join")) {
 				if(!(sender instanceof Player)) {
@@ -163,8 +213,72 @@ public class QuickCraft extends JavaPlugin {
 				}
 				configManager.setMainLobby(p.getLocation());
 				p.sendMessage(PREFIX + ChatColor.GOLD + "Main lobby set!");
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("setmin")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length <= 2) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setmin <Arena> <Amount>");
+					return true;
+				}
+				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+				if(!validInt(args[2])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Please enter a valid number.");
+					return true;
+				}
+				if(arenaManager.isEnabled(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					return true;
+				}
+				if(Integer.parseInt(args[2]) < 2) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "The minimum players must be at least 2.");
+					return true;
+				}
+				arenaManager.setMinPlayers(args[1], Integer.parseInt(args[2]));
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Minimum players set.");
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("setmax")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length <= 2) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setmax <Arena> <Amount>");
+					return true;
+				}
+				if(!arenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+				if(!validInt(args[2])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Please enter a valid number.");
+					return true;
+				}
+				if(arenaManager.isEnabled(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					return true;
+				}
+				arenaManager.setMaxPlayers(args[1], Integer.parseInt(args[2]));
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Maximum players set.");
+				return true;
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
+		}
+		return true;
+	}
+	
+	public boolean validInt(String input) {
+		try {
+			Integer.parseInt(input);
+		} catch(Exception e) {
+			return false;
 		}
 		return true;
 	}
