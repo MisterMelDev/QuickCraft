@@ -12,11 +12,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.CraftItemEvent;
 
 import nl.mistermel.quickcraft.Arena;
 import nl.mistermel.quickcraft.QuickCraft;
 
-public class ArenaManager implements Runnable {
+public class ArenaManager implements Runnable, Listener {
 	
 	private Map<String, Arena> arenas = new HashMap<String, Arena>();
 	private Random r = new Random();
@@ -35,6 +38,18 @@ public class ArenaManager implements Runnable {
 	public void run() {
 		for(Arena arena : arenas.values()) {
 			arena.tick();
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerCraft(CraftItemEvent e) {
+		Player p = (Player) e.getWhoClicked();
+		for(Arena arena : arenas.values()) {
+			if(arena.getPlayers().contains(p)) {
+				if(arena.getItemType() == e.getCurrentItem().getType()) {
+					arena.crafted(p);
+				}
+			}
 		}
 	}
 	

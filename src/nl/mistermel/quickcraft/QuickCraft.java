@@ -24,6 +24,7 @@ public class QuickCraft extends JavaPlugin {
 		arenaManager = new ArenaManager();
 		
 		getServer().getPluginManager().registerEvents(new Events(), this);
+		getServer().getPluginManager().registerEvents(arenaManager, this);
 		
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, arenaManager, 0, 20);
 	}

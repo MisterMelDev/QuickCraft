@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import net.md_5.bungee.api.ChatColor;
 import nl.mistermel.quickcraft.utils.GameState;
 
 public class Arena {
@@ -25,6 +25,8 @@ public class Arena {
 	private int countdown = 30;
 	private boolean enabled;
 	private BukkitScheduler scheduler;
+	
+	private boolean crafted = false;
 	
 	private List<UUID> players = new ArrayList<UUID>();
 	
@@ -85,6 +87,20 @@ public class Arena {
 		}
 	}
 	
+	public Material getItemType() {
+		return mat;
+	}
+	
+	public void crafted(Player p) {
+		if(state != GameState.IN_GAME) return;
+		if(!crafted) {
+			crafted = true;
+			sendMessage(ChatColor.DARK_AQUA + p.getName() + ChatColor.GOLD + " was the fastest crafter!");
+		} else {
+			sendMessage(ChatColor.DARK_AQUA + p.getName() + ChatColor.GOLD + " has crafted the item!");
+		}
+	}
+	
 	public List<Player> getPlayers() {
 		List<Player> players = new ArrayList<Player>();
 		for(UUID u : this.players) {
@@ -116,6 +132,7 @@ public class Arena {
 			leave(p);
 		}
 		countdown = 30;
+		crafted = false;
 		mat = QuickCraft.getArenaManager().getRandomMaterial();
 	}
 	
