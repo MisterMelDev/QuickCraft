@@ -19,6 +19,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
 import nl.mistermel.quickcraft.utils.GameState;
+import nl.mistermel.quickcraft.utils.ItemUtils;
 
 public class Arena {
 
@@ -148,6 +149,10 @@ public class Arena {
 					public void run() {
 						sendTitle(ChatColor.GREEN + "GO!", ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
 						sendMessage(ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
+						for(UUID u : players) {
+							Player p = Bukkit.getPlayer(u);
+							p.getInventory().addItem(ItemUtils.getIngredients(mat));
+						}
 						
 						for (String score : board.getEntries()) {
 							board.resetScores(score);
