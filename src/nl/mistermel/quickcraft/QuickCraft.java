@@ -29,12 +29,20 @@ public class QuickCraft extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, arenaManager, 0, 20);
 	}
 	
+	public void onDisable() {
+		for(Arena arena : arenaManager.getArenas()) {
+			for(Player p : arena.getPlayers()) {
+				arena.leave(p);
+			}
+		}
+	}
+	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("quickcraft")) {
 			if(args.length == 0) {
 				sender.sendMessage(ChatColor.AQUA + "+---------=QuickCraft=---------+");
 				sender.sendMessage(ChatColor.GOLD + "QuickCraft");
-				sender.sendMessage(ChatColor.GOLD + "Made by " + ChatColor.DARK_AQUA + "MisterMel & rens4000");
+				sender.sendMessage(ChatColor.GOLD + "Made by " + ChatColor.DARK_AQUA + "MisterMel");
 				sender.sendMessage(ChatColor.GOLD + "Use /qc help for a list of commands.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
 				return true;

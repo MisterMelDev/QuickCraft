@@ -2,6 +2,7 @@ package nl.mistermel.quickcraft.utils;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +93,10 @@ public class ArenaManager implements Runnable, Listener {
 			Arena arena = new Arena(lobbyLoc, spawnLoc, data.getBoolean("arenas." + key + ".enabled"), this, key);
 			arenas.put(key, arena);
 		}
+	}
+	
+	public Collection<Arena> getArenas() {
+		return arenas.values();
 	}
 	
 	public void setEnabled(String name, boolean enabled) {

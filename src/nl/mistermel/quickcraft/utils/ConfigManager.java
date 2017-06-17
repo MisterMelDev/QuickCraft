@@ -12,6 +12,9 @@ import nl.mistermel.quickcraft.QuickCraft;
 
 public class ConfigManager {
 	
+	private File configFile;
+	private FileConfiguration config;
+	
 	private File dataFile;
 	private FileConfiguration data;
 	
@@ -22,6 +25,13 @@ public class ConfigManager {
 		
 		dataFile = new File(pl.getDataFolder(), "data.yml");
 		data = YamlConfiguration.loadConfiguration(dataFile);
+		
+		configFile = new File(pl.getDataFolder(), "config.yml");
+		config = YamlConfiguration.loadConfiguration(configFile);
+		
+		if(!config.contains("servername")) {
+			config.set("servername", "&6ExampleServer");
+		}
 	}
 	
 	public void setMainLobby(Location loc) {
@@ -56,4 +66,7 @@ public class ConfigManager {
 		return data;
 	}
 	
+	public FileConfiguration getConfigFile() {
+		return config;
+	}
 }
