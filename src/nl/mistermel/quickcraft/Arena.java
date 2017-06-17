@@ -99,6 +99,23 @@ public class Arena {
 			if (countdown <= 0) {
 				state = GameState.IN_GAME;
 				sendMessage(ChatColor.GOLD + "The game is starting!");
+				for (String score : board.getEntries()) {
+					board.resetScores(score);
+				}
+				
+				Score filler3 = obj.getScore(ChatColor.GRAY + "");
+				filler3.setScore(3);
+
+				Score status1 = obj.getScore(ChatColor.GREEN + "The game is starting!");
+				status1.setScore(2);
+
+				Score filler4 = obj.getScore("");
+				filler4.setScore(1);
+
+				Score serverName1 = obj.getScore(
+						ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+				serverName1.setScore(0);
+				
 				setExp(0);
 				teleport(spawnLoc);
 
@@ -124,6 +141,24 @@ public class Arena {
 					public void run() {
 						sendTitle(ChatColor.GREEN + "GO!", ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
 						sendMessage(ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
+						
+						for (String score : board.getEntries()) {
+							board.resetScores(score);
+						}
+						
+						Score filler1 = obj.getScore(ChatColor.GRAY + "");
+						filler1.setScore(3);
+
+						Score status = obj.getScore(ChatColor.GREEN + "Craft a " + mat.toString().toLowerCase());
+						status.setScore(2);
+
+						Score filler2 = obj.getScore("");
+						filler2.setScore(1);
+
+						Score serverName = obj.getScore(
+								ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+						serverName.setScore(0);
+						
 					}
 				}, 60);
 
