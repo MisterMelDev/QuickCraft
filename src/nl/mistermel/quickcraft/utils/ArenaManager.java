@@ -89,7 +89,7 @@ public class ArenaManager implements Runnable, Listener {
 		for(String key : data.getConfigurationSection("arenas").getKeys(false)) {
 			Location lobbyLoc = new Location(Bukkit.getWorld(data.getString("arenas." + key + ".lobby.world")), data.getInt("arenas." + key + ".lobby.x"), data.getInt("arenas." + key + ".lobby.y"), data.getInt("arenas." + key + ".lobby.z"));
 			Location spawnLoc = new Location(Bukkit.getWorld(data.getString("arenas." + key + ".spawn.world")), data.getInt("arenas." + key + ".spawn.x"), data.getInt("arenas." + key + ".spawn.y"), data.getInt("arenas." + key + ".spawn.z"));
-			Arena arena = new Arena(lobbyLoc, spawnLoc, data.getBoolean("arenas." + key + ".enabled"), this);
+			Arena arena = new Arena(lobbyLoc, spawnLoc, data.getBoolean("arenas." + key + ".enabled"), this, key);
 			arenas.put(key, arena);
 		}
 	}
@@ -136,7 +136,7 @@ public class ArenaManager implements Runnable, Listener {
 	
 	public void createArena(String name) {
 		Location emptyLoc = new Location(Bukkit.getWorld("world"), 0, 0, 0);
-		arenas.put(name, new Arena(emptyLoc, emptyLoc, false, this));
+		arenas.put(name, new Arena(emptyLoc, emptyLoc, false, this, name));
 		save();
 	}
 	

@@ -11,6 +11,10 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.GameState;
@@ -27,19 +31,33 @@ public class Arena {
 	private boolean enabled;
 	private BukkitScheduler scheduler;
 	
+	private Scoreboard board;
+	private Objective obj;
+	
+	private String name;
+	
 	private List<UUID> players = new ArrayList<UUID>();
 	
 	private List<UUID> crafted = new ArrayList<UUID>();
 	
-	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, ArenaManager arenaManager) {
+	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, ArenaManager arenaManager, String name) {
 		this.lobbyLoc = lobbyLoc;
 		this.spawnLoc = spawnLoc;
 		this.enabled = enabled;
+		this.name = name;
 		
 		this.state = GameState.WAITING;
 		this.scheduler = Bukkit.getServer().getScheduler();
 		this.mat = arenaManager.getRandomMaterial();
 		this.pl = QuickCraft.getInstance();
+		this.board = Bukkit.getScoreboardManager().getNewScoreboard();
+		this.obj = board.registerNewObjective("QC" + name, "");
+		
+		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		obj.setDisplayName(ChatColor.AQUA + "QuickCraft");
+		
+		Score status = obj.getScore(ChatColor.GREEN + "Waiting for players");
+		status.setScore(1);
 	}
 	
 	public void tick() {
@@ -146,6 +164,8 @@ public class Arena {
 			}
 		}
 		
+		p.setScoreboard(board);
+		
 		return true;
 	}
 	
@@ -154,6 +174,7 @@ public class Arena {
 		p.teleport(QuickCraft.getConfigManager().getMainLobby());
 		p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "You left the game.");
 		players.remove(p.getUniqueId());
+		p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 	}
 	
 	public void reset() {
