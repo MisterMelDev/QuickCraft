@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -33,7 +34,6 @@ public class Arena {
 	private boolean enabled;
 	private BukkitScheduler scheduler;
 	private ConfigManager configManager;
-	private ArenaManager arenaManager;
 
 	private Scoreboard board;
 	private Objective obj;
@@ -44,20 +44,19 @@ public class Arena {
 
 	private List<UUID> crafted = new ArrayList<UUID>();
 
-	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, ArenaManager arenaManager, String name) {
+	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, String name) {
 		this.lobbyLoc = lobbyLoc;
 		this.spawnLoc = spawnLoc;
 		this.enabled = enabled;
 		this.name = name;
-		this.arenaManager = arenaManager;
 
 		this.state = GameState.WAITING;
-		if(arenaManager.signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+		if(ArenaManager.signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
 		}
 		this.scheduler = Bukkit.getServer().getScheduler();
 		this.configManager = QuickCraft.getConfigManager();
-		this.mat = arenaManager.getRandomMaterial();
+		this.mat = ItemUtils.getRandomMaterial();
 		this.pl = QuickCraft.getInstance();
 		this.board = Bukkit.getScoreboardManager().getNewScoreboard();
 		this.obj = board.registerNewObjective("QC" + name, "");
@@ -103,8 +102,8 @@ public class Arena {
 			setExp(countdown);
 			if (countdown <= 0) {
 				state = GameState.IN_GAME;
-				if(arenaManager.signCreated(name)) {
-					QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+				if(ArenaManager.signCreated(name)) {
+					QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
 				}
 				sendMessage(ChatColor.GOLD + "The game is starting!");
 				for (String score : board.getEntries()) {
@@ -147,11 +146,13 @@ public class Arena {
 
 				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 					public void run() {
-						sendTitle(ChatColor.GREEN + "GO!", ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
-						sendMessage(ChatColor.GOLD + "Craft a " + mat.toString().toLowerCase());
+						sendTitle(ChatColor.GREEN + "GO!", ChatColor.GOLD + "Craft a " + mat.name());
+						sendMessage(ChatColor.GOLD + "Craft a " + mat.name());
 						for(UUID u : players) {
 							Player p = Bukkit.getPlayer(u);
-							p.getInventory().addItem(ItemUtils.getIngredients(mat));
+							for(ItemStack item : ItemUtils.getIngredients(mat)) {
+								p.getInventory().addItem(item);
+							}
 						}
 						
 						for (String score : board.getEntries()) {
@@ -161,7 +162,7 @@ public class Arena {
 						Score filler1 = obj.getScore(ChatColor.GRAY + "");
 						filler1.setScore(3);
 
-						Score status = obj.getScore(ChatColor.GREEN + "Craft a " + mat.toString().toLowerCase());
+						Score status = obj.getScore(ChatColor.GREEN + "Craft a " + mat.name());
 						status.setScore(2);
 
 						Score filler2 = obj.getScore("");
@@ -245,8 +246,8 @@ public class Arena {
 		if (state == GameState.WAITING) {
 			if (players.size() >= minPlayers) {
 				state = GameState.STARTING;
-				if(arenaManager.signCreated(name)) {
-					QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+				if(ArenaManager.signCreated(name)) {
+					QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
 				}
 				sendMessage(ChatColor.GOLD + "Starting countdown!");
 			}
@@ -266,8 +267,8 @@ public class Arena {
 
 	public void reset() {
 		this.state = GameState.RESETTING;
-		if(arenaManager.signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+		if(ArenaManager.signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
 		}
 		for (int i = 0; i < players.size(); i++) {
 			Player p = Bukkit.getPlayer(players.get(i));
@@ -275,11 +276,26 @@ public class Arena {
 		}
 		countdown = 30;
 		players.clear();
+		
+		
+		Score filler1 = obj.getScore(ChatColor.GRAY + "");
+		filler1.setScore(3);
+
+		Score status = obj.getScore(ChatColor.GREEN + "Waiting for players");
+		status.setScore(2);
+
+		Score filler2 = obj.getScore("");
+		filler2.setScore(1);
+
+		Score serverName = obj.getScore(
+				ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+		serverName.setScore(0);
+		
 		crafted.clear();
-		mat = QuickCraft.getArenaManager().getRandomMaterial();
+		mat = ItemUtils.getRandomMaterial();
 		this.state = GameState.WAITING;
-		if(arenaManager.signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(arenaManager.getSign(name), name);
+		if(ArenaManager.signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
 		}
 	}
 
