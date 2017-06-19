@@ -21,8 +21,12 @@ public class SignManager implements Listener {
 		if(loc.getBlock().getState() instanceof Sign) {
 			Sign s = (Sign) loc.getBlock().getState();
 			s.setLine(2, arena.getState().getDisplayText().toString());
+<<<<<<< HEAD
 			s.setLine(3, ChatColor.GRAY.toString() + arena.getAmountOfPlayers() + "/" + arena.getMaxPlayers());
 			s.update();
+=======
+			s.setLine(3, arena.getAmountOfPlayers() + "/" + arena.getMaxPlayers());
+>>>>>>> origin/master
 		}
  	}
 	
@@ -55,7 +59,7 @@ public class SignManager implements Listener {
 			}
 			e.setLine(0, ChatColor.AQUA + "QuickCraft");
 			e.setLine(1, ChatColor.GOLD + name);
-			e.setLine(2, ArenaManager.getArena(name).getState().getDisplayText());
+			e.setLine(2, ArenaManager.getArena(name).getState().getDisplayText().toString());
 			return;
 		}
 		e.setCancelled(true);

@@ -88,7 +88,7 @@ public class Arena {
 			filler1.setScore(3);
 
 			Score status = obj.getScore(
-					ChatColor.GREEN + "Starting in " + ChatColor.DARK_AQUA + countdown + ChatColor.GREEN + " seconds!");
+					ChatColor.GREEN + "Starting in " + ChatColor.DARK_AQUA + (countdown - 1) + ChatColor.GREEN + " seconds!");
 			status.setScore(2);
 
 			Score filler2 = obj.getScore("");
@@ -264,6 +264,7 @@ public class Arena {
 		p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "You left the game.");
 		players.remove(p.getUniqueId());
 		p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+		p.getInventory().clear();
 	}
 
 	public void reset() {
