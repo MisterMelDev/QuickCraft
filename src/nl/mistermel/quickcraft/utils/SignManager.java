@@ -20,7 +20,7 @@ public class SignManager implements Listener {
 	public void updateSign(Location loc, Arena arena) {
 		if(loc.getBlock().getState() instanceof Sign) {
 			Sign s = (Sign) loc.getBlock().getState();
-			s.setLine(2, arena.getState().getDisplayText());
+			s.setLine(2, arena.getState().getDisplayText().toString());
 			s.setLine(3, arena.getAmountOfPlayers() + "/" + arena.getMaxPlayers());
 		}
  	}
