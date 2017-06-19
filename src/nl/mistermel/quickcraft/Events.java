@@ -1,8 +1,10 @@
 package nl.mistermel.quickcraft;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -33,6 +35,15 @@ public class Events implements Listener {
 			e.setCancelled(true);
 			e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED +
 					"You can't pickup items ingame!");
+		}
+	}
+	
+	public void onDamager(EntityDamageEvent e) {
+		if(e.getEntity() instanceof Player) {
+			if(ArenaManager.isInGame((Player) e.getEntity())) {
+				e.setCancelled(true);
+				
+			}
 		}
 	}
 	
