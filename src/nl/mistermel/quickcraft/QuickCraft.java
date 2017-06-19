@@ -298,6 +298,7 @@ public class QuickCraft extends JavaPlugin {
 		return true;
 	}
 	
+	
 	public static ConfigManager getConfigManager() {
 		return configManager;
 	}

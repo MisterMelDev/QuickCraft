@@ -21,12 +21,8 @@ public class SignManager implements Listener {
 		if(loc.getBlock().getState() instanceof Sign) {
 			Sign s = (Sign) loc.getBlock().getState();
 			s.setLine(2, arena.getState().getDisplayText().toString());
-<<<<<<< HEAD
 			s.setLine(3, ChatColor.GRAY.toString() + arena.getAmountOfPlayers() + "/" + arena.getMaxPlayers());
 			s.update();
-=======
-			s.setLine(3, arena.getAmountOfPlayers() + "/" + arena.getMaxPlayers());
->>>>>>> origin/master
 		}
  	}
 	

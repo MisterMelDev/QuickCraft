@@ -265,6 +265,30 @@ public class Arena {
 		players.remove(p.getUniqueId());
 		p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 		p.getInventory().clear();
+
+		
+		if(players.size() < minPlayers && state == GameState.STARTING) {
+			state = GameState.WAITING;
+			
+			sendMessage(ChatColor.RED + "Countdown cancelled. Not enough players anymore!");
+			
+			for (String score : board.getEntries()) {
+				board.resetScores(score);
+			}
+			
+			Score filler1 = obj.getScore(ChatColor.GRAY + "");
+			filler1.setScore(3);
+
+			Score status = obj.getScore(ChatColor.GREEN + "Waiting for players");
+			status.setScore(2);
+
+			Score filler2 = obj.getScore("");
+			filler2.setScore(1);
+
+			Score serverName = obj.getScore(
+					ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+			serverName.setScore(0);
+		}
 	}
 
 	public void reset() {
