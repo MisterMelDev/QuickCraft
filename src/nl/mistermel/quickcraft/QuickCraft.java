@@ -207,7 +207,7 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				if(ArenaManager.isInGame(p)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You aren't in a game!");
+					sender.sendMessage(PREFIX + ChatColor.RED + "You are already in a game!");
 					return true;
 				}
 				if(!ArenaManager.join(args[1], p)) {
