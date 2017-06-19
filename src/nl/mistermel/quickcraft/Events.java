@@ -4,6 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -38,6 +40,24 @@ public class Events implements Listener {
 		}
 	}
 	
+	@EventHandler
+	public void onPlayerBuild(BlockPlaceEvent e) {
+		if(ArenaManager.isInGame(e.getPlayer())) {
+			e.setCancelled(true);
+			e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED +
+					"You can't place blocks ingame!");
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerBrak(BlockBreakEvent e) {
+		if(ArenaManager.isInGame(e.getPlayer())) {
+			e.setCancelled(true);
+			e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED +
+					"You can't break blocks ingame!");
+		}
+	}
+	@EventHandler
 	public void onDamager(EntityDamageEvent e) {
 		if(e.getEntity() instanceof Player) {
 			if(ArenaManager.isInGame((Player) e.getEntity())) {
