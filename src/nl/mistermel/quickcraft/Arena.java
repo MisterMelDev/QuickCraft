@@ -211,7 +211,7 @@ public class Arena {
 				sendMessage(ChatColor.DARK_GRAY + "3: " + Bukkit.getPlayer(crafted.get(2)).getName());
 			for(UUID u : players) {
 				Player p2 = Bukkit.getPlayer(u);
-				p2.sendMessage(ChatColor.GREEN + "You came " + (crafted.indexOf(p2.getUniqueId()) + 1) + "st");
+				p2.sendMessage(ChatColor.GREEN + "You became " + (crafted.indexOf(p2.getUniqueId()) + 1) + "st");
 			}
 			scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 				public void run() {

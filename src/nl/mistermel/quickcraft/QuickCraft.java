@@ -45,6 +45,7 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.AQUA + "+---------=QuickCraft=---------+");
 				sender.sendMessage(ChatColor.GOLD + "QuickCraft");
 				sender.sendMessage(ChatColor.GOLD + "Made by " + ChatColor.DARK_AQUA + "MisterMel");
+				sender.sendMessage(ChatColor.GOLD + "With help from " + ChatColor.DARK_AQUA + "rens4000");
 				sender.sendMessage(ChatColor.GOLD + "Use /qc help for a list of commands.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
 				return true;
