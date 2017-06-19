@@ -266,6 +266,9 @@ public class Arena {
 		p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 		p.getInventory().clear();
 
+		if(ArenaManager.signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
+		}
 		
 		if(players.size() < minPlayers && state == GameState.STARTING) {
 			state = GameState.WAITING;
