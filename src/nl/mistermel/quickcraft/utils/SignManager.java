@@ -20,8 +20,9 @@ public class SignManager implements Listener {
 	public void updateSign(Location loc, Arena arena) {
 		if(loc.getBlock().getState() instanceof Sign) {
 			Sign s = (Sign) loc.getBlock().getState();
-			s.setLine(2, arena.getState().getDisplayText());
-			s.setLine(3, arena.getAmountOfPlayers() + "/" + arena.getMaxPlayers());
+			s.setLine(2, arena.getState().getDisplayText().toString());
+			s.setLine(3, ChatColor.GRAY.toString() + arena.getAmountOfPlayers() + "/" + arena.getMaxPlayers());
+			s.update();
 		}
  	}
 	
@@ -73,6 +74,7 @@ public class SignManager implements Listener {
 					}
 					String name = ChatColor.stripColor(s.getLine(1));
 					e.getPlayer().performCommand("qc join " + name);
+					updateSign(e.getClickedBlock().getLocation(), ArenaManager.getArena(name));
 					ArenaManager.setSign(e.getClickedBlock().getLocation(), name);
 				}
 			}
