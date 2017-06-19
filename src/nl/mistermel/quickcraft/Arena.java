@@ -302,6 +302,8 @@ public class Arena {
 		for (int i = 0; i < players.size(); i++) {
 			Player p = Bukkit.getPlayer(players.get(i));
 			p.teleport(configManager.getMainLobby());
+			p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+			p.getInventory().clear();;
 		}
 		countdown = 30;
 		players.clear();
@@ -397,6 +399,10 @@ public class Arena {
 
 	public GameState getState() {
 		return state;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 	public void setLobbyLocation(Location loc) {

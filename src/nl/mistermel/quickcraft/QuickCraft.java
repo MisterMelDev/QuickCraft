@@ -55,6 +55,7 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/quickcraft or /qc" + ChatColor.GRAY + " - Main command.");
 				sender.sendMessage(ChatColor.GOLD + "/qc help" + ChatColor.GRAY + " - Shows this message.");
 				sender.sendMessage(ChatColor.GOLD + "/qc join <Name>" + ChatColor.GRAY + " - Join a game.");
+				sender.sendMessage(ChatColor.GOLD + "/qc list" + ChatColor.GRAY + " - Lists all the arenas.");
 				sender.sendMessage(ChatColor.GOLD + "/qc leave" + ChatColor.GRAY + " - Leave a game.");
 				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
@@ -278,6 +279,19 @@ public class QuickCraft extends JavaPlugin {
 				}
 				ArenaManager.setMaxPlayers(args[1], Integer.parseInt(args[2]));
 				sender.sendMessage(PREFIX + ChatColor.GOLD + "Maximum players set.");
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("list")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setmax <Arena> <Amount>");
+					return true;
+				}
+				StringBuilder str = new StringBuilder();
+				for(Arena arena : ArenaManager.getArenas()) {
+					String name = arena.getName();
+					str.append(name + ", ");
+				}
+				sender.sendMessage(PREFIX + str.toString());
 				return true;
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");

@@ -38,11 +38,11 @@ public class Events implements Listener {
 		}
 	}
 	
+	@EventHandler
 	public void onDamager(EntityDamageEvent e) {
 		if(e.getEntity() instanceof Player) {
 			if(ArenaManager.isInGame((Player) e.getEntity())) {
 				e.setCancelled(true);
-				
 			}
 		}
 	}
