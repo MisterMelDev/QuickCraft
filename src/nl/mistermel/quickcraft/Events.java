@@ -41,8 +41,6 @@ public class Events implements Listener {
 	}
 	
 	@EventHandler
-<<<<<<< HEAD
-=======
 	public void onPlayerBuild(BlockPlaceEvent e) {
 		if(ArenaManager.isInGame(e.getPlayer())) {
 			e.setCancelled(true);
@@ -60,7 +58,6 @@ public class Events implements Listener {
 		}
 	}
 	@EventHandler
->>>>>>> origin/master
 	public void onDamager(EntityDamageEvent e) {
 		if(e.getEntity() instanceof Player) {
 			if(ArenaManager.isInGame((Player) e.getEntity())) {

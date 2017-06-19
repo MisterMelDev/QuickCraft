@@ -206,6 +206,10 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
 					return true;
 				}
+				if(ArenaManager.isInGame(p)) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You aren't in a game!");
+					return true;
+				}
 				if(!ArenaManager.join(args[1], p)) {
 					sender.sendMessage(PREFIX + ChatColor.RED + "This game is currently not joinable.");
 				} else {
