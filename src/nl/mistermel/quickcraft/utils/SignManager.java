@@ -42,7 +42,7 @@ public class SignManager implements Listener {
 		}
 		if(e.getLine(1).equalsIgnoreCase("join")) {
 			if(e.getLine(2) == null) {
-				p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "Please enter a arena name on the second line.");
+				p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "Please enter an arena name on the second line.");
 				e.setCancelled(true);
 				return;
 			}

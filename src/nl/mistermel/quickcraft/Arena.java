@@ -209,6 +209,7 @@ public class Arena {
 			sendMessage(ChatColor.GREEN + "2: " + Bukkit.getPlayer(crafted.get(1)).getName());
 			if(crafted.size() >= 3)
 				sendMessage(ChatColor.DARK_GRAY + "3: " + Bukkit.getPlayer(crafted.get(2)).getName());
+			sendMessage("");
 			for(UUID u : players) {
 				Player p2 = Bukkit.getPlayer(u);
 				p2.sendMessage(ChatColor.GREEN + "You became " + (crafted.indexOf(p2.getUniqueId()) + 1) + "st");

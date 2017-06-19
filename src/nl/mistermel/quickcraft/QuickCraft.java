@@ -193,7 +193,7 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("join")) {
 				if(!(sender instanceof Player)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used by players!");
+					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
 					return true;
 				}
 				Player p = (Player) sender;
@@ -214,7 +214,7 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("setmainlobby")) {
 				if(!(sender instanceof Player)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used by players!");
+					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
 					return true;
 				}
 				Player p = (Player) sender;
