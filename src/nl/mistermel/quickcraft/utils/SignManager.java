@@ -54,7 +54,7 @@ public class SignManager implements Listener {
 			}
 			e.setLine(0, ChatColor.AQUA + "QuickCraft");
 			e.setLine(1, ChatColor.GOLD + name);
-			e.setLine(2, ArenaManager.getArena(name).getState().getDisplayText());
+			e.setLine(2, ArenaManager.getArena(name).getState().getDisplayText().toString());
 			return;
 		}
 		e.setCancelled(true);
