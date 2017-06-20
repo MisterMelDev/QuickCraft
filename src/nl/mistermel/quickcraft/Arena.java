@@ -34,6 +34,8 @@ public class Arena {
 	private boolean enabled;
 	private BukkitScheduler scheduler;
 	private ConfigManager configManager;
+	private int round = 1;
+	private int rounds;
 
 	private Scoreboard board;
 	private Objective obj;
@@ -44,11 +46,14 @@ public class Arena {
 
 	private List<UUID> crafted = new ArrayList<UUID>();
 
-	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, String name) {
+	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, String name, int minPlayers, int maxPlayers, int rounds) {
 		this.lobbyLoc = lobbyLoc;
 		this.spawnLoc = spawnLoc;
 		this.enabled = enabled;
 		this.name = name;
+		this.minPlayers = minPlayers;
+		this.maxPlayers = maxPlayers;
+		this.rounds = rounds;
 
 		this.state = GameState.WAITING;
 		if(ArenaManager.signCreated(name)) {
@@ -204,22 +209,65 @@ public class Arena {
 		crafted.add(p.getUniqueId());
 
 		if (crafted.size() >= players.size()) {
-			sendMessage(ChatColor.DARK_AQUA + "Everybody finished!");
-			sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(crafted.get(0)).getName());
-			sendMessage(ChatColor.GREEN + "2: " + Bukkit.getPlayer(crafted.get(1)).getName());
-			if(crafted.size() >= 3)
-				sendMessage(ChatColor.DARK_GRAY + "3: " + Bukkit.getPlayer(crafted.get(2)).getName());
-			sendMessage("");
-			for(UUID u : players) {
-				Player p2 = Bukkit.getPlayer(u);
-				p2.sendMessage(ChatColor.GREEN + "You became " + (crafted.indexOf(p2.getUniqueId()) + 1) + "st");
-			}
-			scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
-				public void run() {
-					reset();
+			round++;
+			
+			if(round > rounds) {
+				end();
+				return;
+			} else {
+				crafted.clear();
+				for(UUID u : players) {
+					Player p2 = Bukkit.getPlayer(u);
+					p2.getInventory().clear();
 				}
-			}, 80L);
+				
+				mat = ItemUtils.getRandomMaterial();
+				
+				sendMessage(ChatColor.GOLD + "Everybody finished! There are " + (rounds - round) + " rounds left.");
+				
+				for (String score : board.getEntries()) {
+					board.resetScores(score);
+				}
+				
+				Score filler1 = obj.getScore(ChatColor.GRAY + "");
+				filler1.setScore(3);
+
+				Score status = obj.getScore(ChatColor.GREEN + "Craft a " + mat.name());
+				status.setScore(2);
+
+				Score filler2 = obj.getScore("");
+				filler2.setScore(1);
+
+				Score serverName = obj.getScore(
+						ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+				serverName.setScore(0);
+				
+				for(UUID u : players) {
+					Player p2 = Bukkit.getPlayer(u);
+					for(ItemStack item : ItemUtils.getIngredients(mat)) {
+						p2.getInventory().addItem(item);
+					}
+				}
+			}
 		}
+	}
+	
+	public void end() {
+		sendMessage(ChatColor.DARK_AQUA + "Everybody finished!");
+		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(crafted.get(0)).getName());
+		sendMessage(ChatColor.GREEN + "2: " + Bukkit.getPlayer(crafted.get(1)).getName());
+		if(crafted.size() >= 3)
+			sendMessage(ChatColor.DARK_GRAY + "3: " + Bukkit.getPlayer(crafted.get(2)).getName());
+		sendMessage("");
+		for(UUID u : players) {
+			Player p2 = Bukkit.getPlayer(u);
+			p2.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You became " + (crafted.indexOf(p2.getUniqueId()) + 1) + "st");
+		}
+		scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+			public void run() {
+				reset();
+			}
+		}, 80L);
 	}
 
 	public boolean hasCraftedItem(Player p) {
@@ -324,6 +372,7 @@ public class Arena {
 		
 		crafted.clear();
 		mat = ItemUtils.getRandomMaterial();
+		round = 1;
 		this.state = GameState.WAITING;
 		if(ArenaManager.signCreated(name)) {
 			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
@@ -371,6 +420,14 @@ public class Arena {
 			Player p = Bukkit.getPlayer(u);
 			p.teleport(loc);
 		}
+	}
+	
+	public void setRounds(int rounds) {
+		this.rounds = rounds;
+	}
+	
+	public int getRounds() {
+		return rounds;
 	}
 	
 	public int getMaxPlayers() {

@@ -57,11 +57,15 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/qc join <Name>" + ChatColor.GRAY + " - Join a game.");
 				sender.sendMessage(ChatColor.GOLD + "/qc list" + ChatColor.GRAY + " - Lists all the arenas.");
 				sender.sendMessage(ChatColor.GOLD + "/qc leave" + ChatColor.GRAY + " - Leave a game.");
-				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates a new arena.");
-				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of a arena.");
-				sender.sendMessage(ChatColor.GOLD + "/qc setspawn <Name>" + ChatColor.GRAY + " - Sets the spawn of a arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc create <Name>" + ChatColor.GRAY + " - Creates an arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setlobby <Name>" + ChatColor.GRAY + " - Sets the lobby of an arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setspawn <Name>" + ChatColor.GRAY + " - Sets the spawn of an arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc setmainlobby" + ChatColor.GRAY + " - Sets the main lobby.");
-				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles a arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setmin <Name> <Amount>" + ChatColor.GRAY + " - Sets the minimum amount of players.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setmax <Name> <Amount>" + ChatColor.GRAY + " - Sets the maximum amount of players.");
+				sender.sendMessage(ChatColor.GOLD + "/qc setrounds <Name> <Amount>" + ChatColor.GRAY + " - Sets the amount of rounds.");
+				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - Toggles an arena.");
+				sender.sendMessage(ChatColor.GOLD + "/qc remove <Name>" + ChatColor.GRAY + " - Deletes an arena.");
 				sender.sendMessage(ChatColor.GOLD + "/qc reload" + ChatColor.GRAY + " - Reloads the plugin.");
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
 				return true;
@@ -88,6 +92,9 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(PREFIX + ChatColor.GOLD + "Things you should do now:");
 				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Set the lobby. /qc setlobby " + args[1]);
 				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Set the spawn. /qc setspawn " + args[1]);
+				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Set the minimum amount of players. /qc setmin " + args[1] + " <Amount> (OPTIONAL)");
+				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Set the maximum amount of players. /qc setmax" + args[1] + " <Amount> (OPTIONAL)");
+				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Set the amount of rounds. /qc setrounds " + args[1] + " <Amount> (OPTIONAL)");
 				sender.sendMessage(PREFIX + ChatColor.GRAY + "- Enable the arena. /qc toggle " + args[1]);
 				return true;
 			}
@@ -296,6 +303,54 @@ public class QuickCraft extends JavaPlugin {
 					str.append(name + ", ");
 				}
 				sender.sendMessage(PREFIX + str.toString());
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("setrounds")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length <= 2) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setrounds <Arena> <Amount>");
+					return true;
+				}
+				if(!ArenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					return true;
+				}
+				if(!validInt(args[2])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Please enter a valid number.");
+					return true;
+				}
+				if(ArenaManager.isEnabled(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					return true;
+				}
+				ArenaManager.getArena(args[1]).setRounds(Integer.parseInt(args[2]));
+				sender.sendMessage(PREFIX + ChatColor.GOLD + "Amount of rounds set");
+				return true;
+			}
+			if(args[0].equalsIgnoreCase("remove")) {
+				if(!sender.hasPermission("quickcraft.admin")) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					return true;
+				}
+				if(args.length == 1) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc remove <Arena>");
+					return true;
+				}
+				if(ArenaManager.isEnabled(args[1])) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					return true;
+				}
+				if(args.length == 2) {
+					sender.sendMessage(PREFIX + ChatColor.RED + "Are you sure? Use /qc remove " + args[1] + " confirm.");
+					return true;
+				}
+				if(args[2].equalsIgnoreCase("confirm")) {
+					ArenaManager.remove(args[1]);
+					sender.sendMessage(PREFIX + ChatColor.GOLD + "Arena removed.");
+				}
 				return true;
 			}
 			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");

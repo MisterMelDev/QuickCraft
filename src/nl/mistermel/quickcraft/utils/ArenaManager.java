@@ -98,7 +98,7 @@ public class ArenaManager implements Runnable, Listener {
 		for(String key : data.getConfigurationSection("arenas").getKeys(false)) {
 			Location lobbyLoc = new Location(Bukkit.getWorld(data.getString("arenas." + key + ".lobby.world")), data.getInt("arenas." + key + ".lobby.x"), data.getInt("arenas." + key + ".lobby.y"), data.getInt("arenas." + key + ".lobby.z"));
 			Location spawnLoc = new Location(Bukkit.getWorld(data.getString("arenas." + key + ".spawn.world")), data.getInt("arenas." + key + ".spawn.x"), data.getInt("arenas." + key + ".spawn.y"), data.getInt("arenas." + key + ".spawn.z"));
-			Arena arena = new Arena(lobbyLoc, spawnLoc, data.getBoolean("arenas." + key + ".enabled"), key);
+			Arena arena = new Arena(lobbyLoc, spawnLoc, data.getBoolean("arenas." + key + ".enabled"), key, data.getInt("arenas." + key + ".minplayers"), data.getInt("arenas." + key + ".maxplayers"), data.getInt("arenas." + key + ".rounds"));
 			arenas.put(key, arena);
 		}
 	}
@@ -135,11 +135,20 @@ public class ArenaManager implements Runnable, Listener {
 					data.set("arenas." + name + ".spawn.z", arena.getSpawnLocation().getZ());
 				}
 				data.set("arenas." + name + ".enabled", arena.isEnabled());
+				data.set("arenas." + name + ".minplayers", arena.getMinPlayers());
+				data.set("arenas." + name + ".maxplayers", arena.getMaxPlayers());
+				data.set("arenas." + name + ".rounds", arena.getRounds());
 			}
 			data.save(QuickCraft.getConfigManager().getData());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void remove(String name) {
+		data.set("arenas." + name, null);
+		arenas.remove(name);
+		save();
 	}
 	
 	public static boolean join(String name, Player p) {
@@ -149,7 +158,7 @@ public class ArenaManager implements Runnable, Listener {
 	
 	public static void createArena(String name) {
 		Location emptyLoc = new Location(Bukkit.getWorld("world"), 0, 0, 0);
-		arenas.put(name, new Arena(emptyLoc, emptyLoc, false, name));
+		arenas.put(name, new Arena(emptyLoc, emptyLoc, false, name, 2, 10, 3));
 		save();
 	}
 	
