@@ -18,9 +18,12 @@ public class ItemUtils {
 
 	public static Material getRandomMaterial() {
 		Material mat = getPotentiallyUncraftableRandomMaterial();
-		if (craftable(mat))
+		if (craftable(mat)) {
+			if(mat.name().contains("TERRACOTTA")) {
+				return getRandomMaterial();
+			}
 			return mat;
-		else
+		} else
 			return getRandomMaterial();
 	}
 

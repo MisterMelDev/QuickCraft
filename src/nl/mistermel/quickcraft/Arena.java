@@ -223,11 +223,13 @@ public class Arena {
 				
 				mat = ItemUtils.getRandomMaterial();
 				
-				sendMessage(ChatColor.GOLD + "Everybody finished! There are " + (rounds - round) + " rounds left.");
+				sendMessage(ChatColor.GOLD + "Everybody finished! There are " + (rounds - round + 1) + " rounds left.");
 				
 				for (String score : board.getEntries()) {
 					board.resetScores(score);
 				}
+				
+				sendTitle("", ChatColor.GOLD + "Craft a " + mat.name());
 				
 				Score filler1 = obj.getScore(ChatColor.GRAY + "");
 				filler1.setScore(3);
@@ -301,6 +303,8 @@ public class Arena {
 				sendMessage(ChatColor.GOLD + "Starting countdown!");
 			}
 		}
+		
+		p.getInventory().clear();
 
 		p.setScoreboard(board);
 
@@ -340,6 +344,10 @@ public class Arena {
 					ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
 			serverName.setScore(0);
 		}
+		
+		if(players.size() == 0) {
+			reset();
+		}
 	}
 
 	public void reset() {
@@ -355,7 +363,6 @@ public class Arena {
 		}
 		countdown = 30;
 		players.clear();
-		
 		
 		Score filler1 = obj.getScore(ChatColor.GRAY + "");
 		filler1.setScore(3);
