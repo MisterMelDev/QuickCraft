@@ -1,7 +1,9 @@
 package nl.mistermel.quickcraft;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -16,6 +18,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
+
+import com.google.common.collect.Iterables;
 
 import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
@@ -43,8 +47,8 @@ public class Arena {
 	private String name;
 
 	private List<UUID> players = new ArrayList<UUID>();
-
 	private List<UUID> crafted = new ArrayList<UUID>();
+	private Map<UUID, Integer> points = new HashMap<UUID, Integer>();
 
 	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, String name, int minPlayers, int maxPlayers, int rounds) {
 		this.lobbyLoc = lobbyLoc;
@@ -205,8 +209,10 @@ public class Arena {
 		if (hasCraftedItem(p))
 			return;
 		p.getInventory().clear();
-		p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item!");
+		p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item! +1 point");
 		crafted.add(p.getUniqueId());
+		
+		points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 1);
 
 		if (crafted.size() >= players.size()) {
 			round++;
@@ -256,15 +262,12 @@ public class Arena {
 	
 	public void end() {
 		sendMessage(ChatColor.DARK_AQUA + "Everybody finished!");
-		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(crafted.get(0)).getName());
-		sendMessage(ChatColor.GREEN + "2: " + Bukkit.getPlayer(crafted.get(1)).getName());
+		Map<UUID, Integer> sortedPoints = QuickCraft.sortByValue(points);
+		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 0)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(0) + " points");
+		sendMessage(ChatColor.GOLD + "2: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 1)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(1) + " points");
 		if(crafted.size() >= 3)
-			sendMessage(ChatColor.DARK_GRAY + "3: " + Bukkit.getPlayer(crafted.get(2)).getName());
+			sendMessage(ChatColor.GOLD + "3: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 2)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(2) + " points");
 		sendMessage("");
-		for(UUID u : players) {
-			Player p2 = Bukkit.getPlayer(u);
-			p2.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You became " + (crafted.indexOf(p2.getUniqueId()) + 1) + "st");
-		}
 		scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 			public void run() {
 				reset();
@@ -303,6 +306,8 @@ public class Arena {
 				sendMessage(ChatColor.GOLD + "Starting countdown!");
 			}
 		}
+		
+		points.put(p.getUniqueId(), 0);
 		
 		p.getInventory().clear();
 
@@ -378,6 +383,7 @@ public class Arena {
 		serverName.setScore(0);
 		
 		crafted.clear();
+		points.clear();
 		mat = ItemUtils.getRandomMaterial();
 		round = 1;
 		this.state = GameState.WAITING;
