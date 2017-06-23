@@ -18,6 +18,9 @@ public class ConfigManager {
 	private File dataFile;
 	private FileConfiguration data;
 	
+	private File langFile;
+	private FileConfiguration lang;
+	
 	private QuickCraft pl;
 	
 	public ConfigManager() {
@@ -28,6 +31,9 @@ public class ConfigManager {
 		
 		configFile = new File(pl.getDataFolder(), "config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
+		
+		langFile = new File(pl.getDataFolder(), "data.yml");
+		lang = YamlConfiguration.loadConfiguration(langFile);
 		
 		if(!config.contains("servername")) {
 			config.set("servername", "&6ExampleServer");
@@ -53,6 +59,7 @@ public class ConfigManager {
 	public void save() {
 		try {
 			data.save(dataFile);
+			lang.save(langFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -64,6 +71,10 @@ public class ConfigManager {
 	
 	public FileConfiguration getDataFile() {
 		return data;
+	}
+	
+	public FileConfiguration getLangFile() {
+		return lang;
 	}
 	
 	public FileConfiguration getConfigFile() {
