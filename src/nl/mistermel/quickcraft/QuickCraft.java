@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.md_5.bungee.api.ChatColor;
 import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
+import nl.mistermel.quickcraft.utils.LanguageManager;
 import nl.mistermel.quickcraft.utils.SignManager;
 
 public class QuickCraft extends JavaPlugin {
@@ -22,6 +23,7 @@ public class QuickCraft extends JavaPlugin {
 	private static QuickCraft instance;
 	private static ConfigManager configManager;
 	private static SignManager signManager;
+	private static LanguageManager langManager;
 	
 	public static final String PREFIX = ChatColor.AQUA + "QuickCraft" + ChatColor.GRAY + " >> ";
 	
@@ -30,6 +32,7 @@ public class QuickCraft extends JavaPlugin {
 		
 		configManager = new ConfigManager();
 		signManager = new SignManager();
+		langManager = new LanguageManager();
 		
 		getServer().getPluginManager().registerEvents(new Events(), this);
 		getServer().getPluginManager().registerEvents(new ArenaManager(), this);
@@ -79,11 +82,11 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("create")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length == 1) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc create <Name>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc create <Arena>"));
 					return true;
 				}
 				if(!configManager.mainLobbySet()) {
@@ -107,23 +110,23 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("setlobby")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length == 1) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setlobby <Name>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setlobby <Arena>"));
 					return true;
 				}
 				if(!ArenaManager.exists(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				if(!(sender instanceof Player)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("onlyplayer"));
 					return true;
 				}
 				if(ArenaManager.isEnabled(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				Player p = (Player) sender;
@@ -133,7 +136,7 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("leave")) {
 				if(!(sender instanceof Player)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("onlyplayer"));
 					return true;
 				}
 				Player p = (Player) sender;
@@ -146,23 +149,23 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("setspawn")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length == 1) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setspawn <Name>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setspawn <Arena>"));
 					return true;
 				}
 				if(!ArenaManager.exists(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				if(!(sender instanceof Player)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("onlyplayer"));
 					return true;
 				}
 				if(ArenaManager.isEnabled(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				Player p = (Player) sender;
@@ -172,15 +175,15 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("toggle")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length == 1) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc toggle <Name>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc toggle <Arena>"));
 					return true;
 				}
 				if(!ArenaManager.exists(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				boolean toggled = ArenaManager.isEnabled(args[1]);
@@ -199,7 +202,7 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("reload")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				ArenaManager.refreshConfig();
@@ -208,16 +211,16 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("join")) {
 				if(!(sender instanceof Player)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("onlyplayer"));
 					return true;
 				}
 				Player p = (Player) sender;
 				if(args.length == 1) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc join <Name>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc join <Arena>"));
 					return true;
 				}
 				if(!ArenaManager.exists(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				if(ArenaManager.isInGame(p)) {
@@ -233,12 +236,12 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("setmainlobby")) {
 				if(!(sender instanceof Player)) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This command can only be used as a player!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("onlyplayer"));
 					return true;
 				}
 				Player p = (Player) sender;
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				configManager.setMainLobby(p.getLocation());
@@ -247,15 +250,15 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("setmin")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length <= 2) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setmin <Arena> <Amount>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setmin <Arena> <Amount>"));
 					return true;
 				}
 				if(!ArenaManager.exists(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				if(!validInt(args[2])) {
@@ -263,7 +266,7 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				if(ArenaManager.isEnabled(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				if(Integer.parseInt(args[2]) < 2) {
@@ -276,15 +279,15 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("setmax")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length <= 2) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setmax <Arena> <Amount>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setmax <Arena> <Amount>"));
 					return true;
 				}
 				if(!ArenaManager.exists(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				if(!validInt(args[2])) {
@@ -292,7 +295,7 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				if(ArenaManager.isEnabled(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				ArenaManager.setMaxPlayers(args[1], Integer.parseInt(args[2]));
@@ -301,7 +304,7 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("list")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setmax <Arena> <Amount>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				StringBuilder str = new StringBuilder();
@@ -314,15 +317,15 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("setrounds")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length <= 2) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc setrounds <Arena> <Amount>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setrounds <Arena> <Amount>"));
 					return true;
 				}
 				if(!ArenaManager.exists(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "That arena does not exist!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				if(!validInt(args[2])) {
@@ -330,7 +333,7 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				if(ArenaManager.isEnabled(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				ArenaManager.getArena(args[1]).setRounds(Integer.parseInt(args[2]));
@@ -339,15 +342,19 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("remove")) {
 				if(!sender.hasPermission("quickcraft.admin")) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "You dont have permission to use this command!");
+					sender.sendMessage(PREFIX + langManager.getTranslation("noperm"));
 					return true;
 				}
 				if(args.length == 1) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "Use: /qc remove <Arena>");
+					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc remove <Arena>"));
+					return true;
+				}
+				if(!ArenaManager.exists(args[1])) {
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
 				if(ArenaManager.isEnabled(args[1])) {
-					sender.sendMessage(PREFIX + ChatColor.RED + "This arena is currently enabled. To make changes, please disable it first.");
+					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				if(args.length == 2) {
@@ -360,7 +367,7 @@ public class QuickCraft extends JavaPlugin {
 				}
 				return true;
 			}
-			sender.sendMessage(PREFIX + ChatColor.RED + "Unknown command. Use /qc help for a list of commands.");
+			sender.sendMessage(PREFIX + langManager.getTranslation("unknowncommand"));
 		}
 		return true;
 	}
@@ -402,4 +409,7 @@ public class QuickCraft extends JavaPlugin {
 		return instance;
 	}
 	
+	public static LanguageManager getLanguageManager() {
+		return langManager;
+	}
 }
