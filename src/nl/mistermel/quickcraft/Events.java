@@ -37,7 +37,7 @@ public class Events implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerBuild(BlockPlaceEvent e) {
+	public void onBlockPlace(BlockPlaceEvent e) {
 		if(ArenaManager.isInGame(e.getPlayer())) {
 			e.setCancelled(true);
 			e.getPlayer().sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("cant-do-this"));
@@ -45,14 +45,14 @@ public class Events implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerBrak(BlockBreakEvent e) {
+	public void onBlockBreak(BlockBreakEvent e) {
 		if(ArenaManager.isInGame(e.getPlayer())) {
 			e.setCancelled(true);
 			e.getPlayer().sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("cant-do-this"));
 		}
 	}
 	@EventHandler
-	public void onDamager(EntityDamageEvent e) {
+	public void onEntityDamage(EntityDamageEvent e) {
 		if(e.getEntity() instanceof Player) {
 			if(ArenaManager.isInGame((Player) e.getEntity())) {
 				e.setCancelled(true);

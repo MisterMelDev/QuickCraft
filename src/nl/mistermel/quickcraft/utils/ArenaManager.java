@@ -76,6 +76,7 @@ public class ArenaManager implements Runnable, Listener {
 	@EventHandler
 	public void onPlayerCraft(CraftItemEvent e) {
 		Player p = (Player) e.getWhoClicked();
+		if(!isInGame(p)) return;
 		for(Arena arena : arenas.values()) {
 			if(arena.getPlayers().contains(p)) {
 				if(arena.getItemType() == e.getCurrentItem().getType()) {

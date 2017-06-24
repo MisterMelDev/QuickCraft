@@ -65,13 +65,27 @@ public class LanguageManager {
 		lang.addDefault("language.toggle-arena", "Toggle an arena.");
 		lang.addDefault("language.delete-arena", "Delete an arena.");
 		lang.addDefault("language.cant-do-this", "&cYou can't do this while in a game!");
+		lang.addDefault("language.not-enough-players", "&cCountdown cancelled. Not enough players anymore!");
+		lang.addDefault("language.left", "&cYou left the game.");
+		lang.addDefault("language.state-waiting", "&3Waiting");
+		lang.addDefault("language.state-starting", "&3Starting");
+		lang.addDefault("language.state-game", "&2In Game");
+		lang.addDefault("language.state-reset", "&cResetting");
+		lang.addDefault("language.state-waiting-extended", "&3Waiting for players");
+		lang.addDefault("language.countdown", "&6The game is starting in &3%seconds% &6seconds");
+		lang.addDefault("language.starting", "&6The game is starting!");
+		lang.addDefault("language.subtitle", "&6Get ready to craft!");
+		lang.addDefault("language.item", "&6Craft a %item%");
+		lang.addDefault("language.crafted-item", "&6You crafted the item! +1 Point");
+		lang.addDefault("language.crafted-item-first", "&6You were the first to craft the item! +2 Points");
+		lang.addDefault("language.rounds-left", "&6Everybody finished! There are %rounds% rounds left!");
 		lang.options().copyDefaults(true);
 		QuickCraft.getConfigManager().save();
 	}
 	
 	public String getTranslation(String key) {
 		if(!lang.contains(key)) {
-			return ChatColor.RED + "Message not set.";
+			return ChatColor.RED + "Message undefined.";
 		}
 		return " " + ChatColor.translateAlternateColorCodes('&', lang.getString("language." + key));
 	}

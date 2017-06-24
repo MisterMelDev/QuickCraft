@@ -1,17 +1,17 @@
 package nl.mistermel.quickcraft.utils;
 
-import org.bukkit.ChatColor;
+import nl.mistermel.quickcraft.QuickCraft;
 
 public enum GameState {
 	
-	WAITING(ChatColor.GREEN + "Waiting", true), STARTING(ChatColor.GREEN + "Starting", true), IN_GAME(ChatColor.RED + "In Game", false), RESETTING(ChatColor.RED + "Resetting", false);
+	WAITING("state-waiting", true), STARTING("state-starting", true), IN_GAME("state-game", false), RESETTING("state-reset", false);
 	
-	private String displayText;
 	private boolean joinable;
+	private String langKey;
 	
-	GameState(String displayText, boolean joinable) {
-		this.displayText = displayText;
+	GameState(String langKey, boolean joinable) {
 		this.joinable = joinable;
+		this.langKey = langKey;
 	}
 	
 	public boolean isJoinable() {
@@ -19,6 +19,6 @@ public enum GameState {
 	}
 	
 	public String getDisplayText() {
-		return displayText;
+		return QuickCraft.getLanguageManager().getTranslation(langKey);
 	}
 }
