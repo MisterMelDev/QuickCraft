@@ -1,6 +1,5 @@
 package nl.mistermel.quickcraft;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,8 +25,7 @@ public class Events implements Listener {
 	public void onPlayerDrop(PlayerDropItemEvent e) {
 		if(ArenaManager.isInGame(e.getPlayer())) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED +
-					"You can't drop items ingame!");
+			e.getPlayer().sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("cant-do-this"));
 		}
 	}
 	
@@ -35,8 +33,6 @@ public class Events implements Listener {
 	public void onPlayerPickup(PlayerPickupItemEvent e) {
 		if(ArenaManager.isInGame(e.getPlayer())) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED +
-					"You can't pickup items ingame!");
 		}
 	}
 	
@@ -44,8 +40,7 @@ public class Events implements Listener {
 	public void onPlayerBuild(BlockPlaceEvent e) {
 		if(ArenaManager.isInGame(e.getPlayer())) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED +
-					"You can't place blocks ingame!");
+			e.getPlayer().sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("cant-do-this"));
 		}
 	}
 	
@@ -53,8 +48,7 @@ public class Events implements Listener {
 	public void onPlayerBrak(BlockBreakEvent e) {
 		if(ArenaManager.isInGame(e.getPlayer())) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(QuickCraft.PREFIX + ChatColor.RED +
-					"You can't break blocks ingame!");
+			e.getPlayer().sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("cant-do-this"));
 		}
 	}
 	@EventHandler
