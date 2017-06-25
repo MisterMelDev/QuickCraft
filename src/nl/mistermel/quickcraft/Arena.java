@@ -25,6 +25,7 @@ import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
 import nl.mistermel.quickcraft.utils.GameState;
 import nl.mistermel.quickcraft.utils.ItemUtils;
+import nl.mistermel.quickcraft.utils.LanguageManager;
 
 public class Arena {
 
@@ -38,6 +39,7 @@ public class Arena {
 	private boolean enabled;
 	private BukkitScheduler scheduler;
 	private ConfigManager configManager;
+	private LanguageManager langManager;
 	private int round = 1;
 	private int rounds;
 
@@ -50,8 +52,7 @@ public class Arena {
 	private List<UUID> crafted = new ArrayList<UUID>();
 	private Map<UUID, Integer> points = new HashMap<UUID, Integer>();
 
-	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, String name, int minPlayers, int maxPlayers,
-			int rounds) {
+	public Arena(Location lobbyLoc, Location spawnLoc, boolean enabled, String name, int minPlayers, int maxPlayers, int rounds) {
 		this.lobbyLoc = lobbyLoc;
 		this.spawnLoc = spawnLoc;
 		this.enabled = enabled;
@@ -66,6 +67,7 @@ public class Arena {
 		}
 		this.scheduler = Bukkit.getServer().getScheduler();
 		this.configManager = QuickCraft.getConfigManager();
+		this.langManager = QuickCraft.getLanguageManager();
 		this.mat = ItemUtils.getRandomMaterial();
 		this.pl = QuickCraft.getInstance();
 		this.board = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -77,15 +79,13 @@ public class Arena {
 		Score filler1 = obj.getScore(ChatColor.GRAY + "");
 		filler1.setScore(3);
 
-		Score status = obj
-				.getScore(ChatColor.GREEN + QuickCraft.getLanguageManager().getTranslation("state-waiting-extended"));
+		Score status = obj.getScore(ChatColor.GREEN + langManager.getTranslation("state-waiting-extended"));
 		status.setScore(2);
 
 		Score filler2 = obj.getScore("");
 		filler2.setScore(1);
 
-		Score serverName = obj.getScore(
-				ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+		Score serverName = obj.getScore(ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
 		serverName.setScore(0);
 	}
 
@@ -98,15 +98,13 @@ public class Arena {
 			Score filler1 = obj.getScore(ChatColor.GRAY + "");
 			filler1.setScore(3);
 
-			Score status = obj.getScore(QuickCraft.getLanguageManager().getTranslation("countdown")
-					.replaceAll("%seconds%", Integer.toString(countdown - 1)));
+			Score status = obj.getScore(langManager.getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown - 1)));
 			status.setScore(2);
 
 			Score filler2 = obj.getScore("");
 			filler2.setScore(1);
 
-			Score serverName = obj.getScore(
-					ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+			Score serverName = obj.getScore(ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
 			serverName.setScore(0);
 
 			countdown--;
@@ -116,7 +114,7 @@ public class Arena {
 				if (ArenaManager.signCreated(name)) {
 					QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
 				}
-				sendMessage(QuickCraft.getLanguageManager().getTranslation("starting"));
+				sendMessage(langManager.getTranslation("starting"));
 				for (String score : board.getEntries()) {
 					board.resetScores(score);
 				}
@@ -124,14 +122,13 @@ public class Arena {
 				Score filler3 = obj.getScore(ChatColor.GRAY + "");
 				filler3.setScore(3);
 
-				Score status1 = obj.getScore(QuickCraft.getLanguageManager().getTranslation("starting"));
+				Score status1 = obj.getScore(langManager.getTranslation("starting"));
 				status1.setScore(2);
 
 				Score filler4 = obj.getScore("");
 				filler4.setScore(1);
 
-				Score serverName1 = obj.getScore(ChatColor.translateAlternateColorCodes('&',
-						configManager.getConfigFile().getString("servername")));
+				Score serverName1 = obj.getScore(ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
 				serverName1.setScore(0);
 
 				setExp(0);
@@ -139,26 +136,26 @@ public class Arena {
 
 				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 					public void run() {
-						sendTitle(ChatColor.GREEN + "3", QuickCraft.getLanguageManager().getTranslation("subtitle"));
+						sendTitle(ChatColor.GREEN + "3", langManager.getTranslation("subtitle"));
 					}
 				}, 20);
 
 				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 					public void run() {
-						sendTitle(ChatColor.YELLOW + "2", QuickCraft.getLanguageManager().getTranslation("subtitle"));
+						sendTitle(ChatColor.YELLOW + "2", langManager.getTranslation("subtitle"));
 					}
 				}, 40);
 
 				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 					public void run() {
-						sendTitle(ChatColor.YELLOW + "1", QuickCraft.getLanguageManager().getTranslation("subtitle"));
+						sendTitle(ChatColor.YELLOW + "1", langManager.getTranslation("subtitle"));
 					}
 				}, 60);
 
 				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 					public void run() {
-						sendTitle(ChatColor.GREEN + "GO!", QuickCraft.getLanguageManager().getTranslation("item").replaceAll("%item%", mat.name()));
-						sendMessage(QuickCraft.getLanguageManager().getTranslation("item").replaceAll("%item%", mat.name()));
+						sendTitle(langManager.getTranslation("go"), langManager.getTranslation("item").replaceAll("%item%", mat.name()));
+						sendMessage(langManager.getTranslation("item").replaceAll("%item%", mat.name()));
 						for (UUID u : players) {
 							Player p = Bukkit.getPlayer(u);
 							for (ItemStack item : ItemUtils.getIngredients(mat)) {
@@ -173,14 +170,13 @@ public class Arena {
 						Score filler1 = obj.getScore(ChatColor.GRAY + "");
 						filler1.setScore(3);
 
-						Score status = obj.getScore(QuickCraft.getLanguageManager().getTranslation("item").replaceAll("%item%", mat.name()));
+						Score status = obj.getScore(langManager.getTranslation("item").replaceAll("%item%", mat.name()));
 						status.setScore(2);
 
 						Score filler2 = obj.getScore("");
 						filler2.setScore(1);
 
-						Score serverName = obj.getScore(ChatColor.translateAlternateColorCodes('&',
-								configManager.getConfigFile().getString("servername")));
+						Score serverName = obj.getScore(ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
 						serverName.setScore(0);
 
 					}
@@ -189,11 +185,11 @@ public class Arena {
 				return;
 			}
 			if (countdown % 10 == 0) {
-				sendMessage(QuickCraft.getLanguageManager().getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown)));
+				sendMessage(langManager.getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown)));
 				makeSound(Sound.BLOCK_NOTE_PLING);
 			}
 			if (countdown <= 5) {
-				sendMessage(QuickCraft.getLanguageManager().getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown)));
+				sendMessage(langManager.getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown)));
 				makeSound(Sound.BLOCK_NOTE_PLING);
 			}
 		}
@@ -208,31 +204,16 @@ public class Arena {
 			return;
 		if (hasCraftedItem(p))
 			return;
-<<<<<<< HEAD
 		p.getInventory().clear();
+		
 		if(crafted.size() == 0) {
-			p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item first! +2 points");
+			p.sendMessage(QuickCraft.PREFIX + langManager.getTranslation("crafted-item-first"));
 			points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 2);
 		} else {
-			p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item! +1 point");
+			p.sendMessage(QuickCraft.PREFIX + langManager.getTranslation("crafted-item"));
 			points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 1);
 		}
 		crafted.add(p.getUniqueId());
-=======
-		if(crafted.isEmpty()) {
-			p.getInventory().clear();
-			p.sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("crafted-item-first"));
-			crafted.add(p.getUniqueId());
-
-			points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 2);
-		} else {
-			p.getInventory().clear();
-			p.sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("crafted-item"));
-			crafted.add(p.getUniqueId());
-
-			points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 1);
-		}
->>>>>>> origin/master
 
 		if (crafted.size() >= players.size()) {
 			round++;
@@ -249,18 +230,18 @@ public class Arena {
 
 				mat = ItemUtils.getRandomMaterial();
 
-				sendMessage(QuickCraft.getLanguageManager().getTranslation("rounds-left").replaceAll("%rounds-left%", Integer.toString(rounds - round + 1)));
+				sendMessage(langManager.getTranslation("rounds-left").replaceAll("%rounds-left%", Integer.toString(rounds - round + 1)));
 
 				for (String score : board.getEntries()) {
 					board.resetScores(score);
 				}
 
-				sendTitle("", QuickCraft.getLanguageManager().getTranslation("item").replaceAll("%item%", mat.name()));
+				sendTitle("", langManager.getTranslation("item").replaceAll("%item%", mat.name()));
 
 				Score filler1 = obj.getScore(ChatColor.GRAY + "");
 				filler1.setScore(3);
 
-				Score status = obj.getScore(QuickCraft.getLanguageManager().getTranslation("item").replaceAll("%item%", mat.name()));
+				Score status = obj.getScore(langManager.getTranslation("item").replaceAll("%item%", mat.name()));
 				status.setScore(2);
 
 				Score filler2 = obj.getScore("");
@@ -283,20 +264,10 @@ public class Arena {
 	public void end() {
 		sendMessage(ChatColor.DARK_AQUA + "Everybody finished!");
 		Map<UUID, Integer> sortedPoints = QuickCraft.sortByValue(points);
-<<<<<<< HEAD
 		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 0)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 0)) + " points");
 		sendMessage(ChatColor.GOLD + "2: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 1)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 1)) + " points");
 		if(crafted.size() >= 3)
 			sendMessage(ChatColor.GOLD + "3: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 2)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 2)) + " points");
-=======
-		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 0)).getName()
-				+ ChatColor.GRAY + " - " + sortedPoints.get(0) + " points");
-		sendMessage(ChatColor.GOLD + "2: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 1)).getName()
-				+ ChatColor.GRAY + " - " + sortedPoints.get(1) + " points");
-		if (crafted.size() >= 3)
-			sendMessage(ChatColor.GOLD + "3: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 2)).getName()
-					+ ChatColor.GRAY + " - " + sortedPoints.get(2) + " points");
->>>>>>> origin/master
 		sendMessage("");
 		scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 			public void run() {
@@ -333,7 +304,7 @@ public class Arena {
 				if (ArenaManager.signCreated(name)) {
 					QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
 				}
-				sendMessage(ChatColor.GOLD + "Starting countdown!");
+				sendMessage(langManager.getTranslation("starting-countdown"));
 			}
 		}
 
@@ -348,7 +319,7 @@ public class Arena {
 
 	public void leave(Player p) {
 		p.teleport(QuickCraft.getConfigManager().getMainLobby());
-		p.sendMessage(QuickCraft.PREFIX + QuickCraft.getLanguageManager().getTranslation("left"));
+		p.sendMessage(QuickCraft.PREFIX + langManager.getTranslation("left"));
 		players.remove(p.getUniqueId());
 		p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 		p.getInventory().clear();
@@ -360,7 +331,7 @@ public class Arena {
 		if (players.size() < minPlayers && state == GameState.STARTING) {
 			state = GameState.WAITING;
 
-			sendMessage(QuickCraft.getLanguageManager().getTranslation("not-enough-players"));
+			sendMessage(langManager.getTranslation("not-enough-players"));
 
 			for (String score : board.getEntries()) {
 				board.resetScores(score);
@@ -369,7 +340,7 @@ public class Arena {
 			Score filler1 = obj.getScore(ChatColor.GRAY + "");
 			filler1.setScore(3);
 
-			Score status = obj.getScore(ChatColor.GREEN + "Waiting for players");
+			Score status = obj.getScore(langManager.getTranslation("state-waiting-extended"));
 			status.setScore(2);
 
 			Score filler2 = obj.getScore("");
@@ -403,14 +374,13 @@ public class Arena {
 		Score filler1 = obj.getScore(ChatColor.GRAY + "");
 		filler1.setScore(3);
 
-		Score status = obj.getScore(ChatColor.GREEN + "Waiting for players");
+		Score status = obj.getScore(langManager.getTranslation("state-waiting-extended"));
 		status.setScore(2);
 
 		Score filler2 = obj.getScore("");
 		filler2.setScore(1);
 
-		Score serverName = obj.getScore(
-				ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
+		Score serverName = obj.getScore(ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
 		serverName.setScore(0);
 
 		crafted.clear();

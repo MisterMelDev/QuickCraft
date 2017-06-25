@@ -35,9 +35,8 @@ public class ConfigManager {
 		langFile = new File(pl.getDataFolder(), "data.yml");
 		lang = YamlConfiguration.loadConfiguration(langFile);
 		
-		if(!config.contains("servername")) {
-			config.set("servername", "&6ExampleServer");
-		}
+		config.addDefault("servername", "&6ExampleServer");
+		config.options().copyDefaults(true);
 	}
 	
 	public void setMainLobby(Location loc) {

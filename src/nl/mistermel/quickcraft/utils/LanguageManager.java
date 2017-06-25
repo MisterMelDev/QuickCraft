@@ -79,6 +79,8 @@ public class LanguageManager {
 		lang.addDefault("language.crafted-item", "&6You crafted the item! +1 Point");
 		lang.addDefault("language.crafted-item-first", "&6You were the first to craft the item! +2 Points");
 		lang.addDefault("language.rounds-left", "&6Everybody finished! There are %rounds% rounds left!");
+		lang.addDefault("language.starting-countdown", "&6Starting countdown!");
+		lang.addDefault("language.go", "&3GO!");
 		lang.options().copyDefaults(true);
 		QuickCraft.getConfigManager().save();
 	}
