@@ -5,7 +5,7 @@ It recently has been published on SpigotMC.org. [(CLICK HERE)](https://www.spigo
 Thanks to rens4000 for his help!
 
 
-##Terms and conditions
+## Terms and conditions
 By downloading, installing, using or viewing the source code of QuickCraft, you agree to the following terms and conditions:
 - You will not claim QuickCraft as your own,
 - When referencing QuickCraft (e.g. a YouTube video showcasing QuickCraft) you will always link to the SpigotMC page of QuickCraft (https://www.spigotmc.org/resources/quickcraft.42559/),
