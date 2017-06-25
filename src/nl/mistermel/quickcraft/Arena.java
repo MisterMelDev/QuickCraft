@@ -209,10 +209,14 @@ public class Arena {
 		if (hasCraftedItem(p))
 			return;
 		p.getInventory().clear();
-		p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item! +1 point");
+		if(crafted.size() == 0) {
+			p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item first! +2 points");
+			points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 2);
+		} else {
+			p.sendMessage(QuickCraft.PREFIX + ChatColor.GREEN + "You crafted the item! +1 point");
+			points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 1);
+		}
 		crafted.add(p.getUniqueId());
-		
-		points.put(p.getUniqueId(), points.get(p.getUniqueId()) + 1);
 
 		if (crafted.size() >= players.size()) {
 			round++;
@@ -263,10 +267,10 @@ public class Arena {
 	public void end() {
 		sendMessage(ChatColor.DARK_AQUA + "Everybody finished!");
 		Map<UUID, Integer> sortedPoints = QuickCraft.sortByValue(points);
-		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 0)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(0) + " points");
-		sendMessage(ChatColor.GOLD + "2: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 1)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(1) + " points");
+		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 0)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 0)) + " points");
+		sendMessage(ChatColor.GOLD + "2: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 1)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 1)) + " points");
 		if(crafted.size() >= 3)
-			sendMessage(ChatColor.GOLD + "3: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 2)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(2) + " points");
+			sendMessage(ChatColor.GOLD + "3: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 2)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 2)) + " points");
 		sendMessage("");
 		scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 			public void run() {
