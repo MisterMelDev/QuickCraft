@@ -64,7 +64,7 @@ public class SignManager implements Listener {
 	
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
-		if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND && e.hasBlock()) {
+		if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.hasBlock()) {
 			if(e.getClickedBlock().getType() == Material.WALL_SIGN || e.getClickedBlock().getType() == Material.SIGN_POST) {
 				Sign s = (Sign) e.getClickedBlock().getState();
 				if(s.getLine(0).equals(ChatColor.AQUA + "QuickCraft")) {
