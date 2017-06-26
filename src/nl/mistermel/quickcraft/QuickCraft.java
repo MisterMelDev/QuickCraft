@@ -76,6 +76,7 @@ public class QuickCraft extends JavaPlugin {
 				sender.sendMessage(ChatColor.GOLD + "/qc setrounds <Name> <Amount>" + ChatColor.GRAY + " - " + langManager.getTranslation("set-amount-of-rounds"));
 				sender.sendMessage(ChatColor.GOLD + "/qc toggle <Name>" + ChatColor.GRAY + " - " + langManager.getTranslation("toggle-arena"));
 				sender.sendMessage(ChatColor.GOLD + "/qc remove <Name>" + ChatColor.GRAY + " - " + langManager.getTranslation("delete-arena"));
+				sender.sendMessage(ChatColor.GOLD + "/qc stats" + ChatColor.GRAY + " - " + langManager.getTranslation("show-stats"));
 				sender.sendMessage(ChatColor.AQUA + "+------------------------------+");
 				return true;
 			}
@@ -132,6 +133,13 @@ public class QuickCraft extends JavaPlugin {
 				ArenaManager.setLobby(args[1], p.getLocation());
 				sender.sendMessage(PREFIX + langManager.getTranslation("lobby-set"));
 				return true;
+			}
+			if(args[0].equalsIgnoreCase("stats")) {
+				if(!configManager.getScoreFile().contains("players." + sender.getName() + ".wins")) {
+					sender.sendMessage(PREFIX + langManager.getTranslation("language.no-stats"));
+				} else {
+					sender.sendMessage(PREFIX + langManager.getTranslation("language.stats").replaceAll("%games%", configManager.getScoreFile().getString("players." + sender.getName() + ".wins")));
+				}
 			}
 			if(args[0].equalsIgnoreCase("leave")) {
 				if(!(sender instanceof Player)) {

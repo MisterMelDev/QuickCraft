@@ -260,10 +260,23 @@ public class Arena {
 			}
 		}
 	}
+	
+	public void addToScoreFile(String name) {
+		Player p = Bukkit.getPlayer(name);
+		if(configManager.getScoreFile().contains("players." + p.getName() + ".wins")) {
+			int newWins = configManager.getScoreFile().getInt("players." + p.getName() + ".wins") + 1;
+			configManager.getScoreFile().set("players." + p.getName() + ".wins", newWins);
+			configManager.save();
+		} else {
+			configManager.getScoreFile().set("players." + p.getName() + ".wins", 1);
+			configManager.save();
+		}
+	}
 
 	public void end() {
 		sendMessage(ChatColor.DARK_AQUA + "Everybody finished!");
 		Map<UUID, Integer> sortedPoints = QuickCraft.sortByValue(points);
+		addToScoreFile(Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 0)).getName());
 		sendMessage(ChatColor.GOLD + "1: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 0)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 0)) + " points");
 		sendMessage(ChatColor.GOLD + "2: " + Bukkit.getPlayer(Iterables.get(sortedPoints.keySet(), 1)).getName() + ChatColor.GRAY + " - " + sortedPoints.get(Iterables.get(sortedPoints.keySet(), 1)) + " points");
 		if(crafted.size() >= 3)

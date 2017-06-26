@@ -21,6 +21,9 @@ public class ConfigManager {
 	private File langFile;
 	private FileConfiguration lang;
 	
+	private File scoreFile;
+	private FileConfiguration score;
+	
 	private QuickCraft pl;
 	
 	public ConfigManager() {
@@ -35,6 +38,7 @@ public class ConfigManager {
 		langFile = new File(pl.getDataFolder(), "lang.yml");
 		lang = YamlConfiguration.loadConfiguration(langFile);
 		
+<<<<<<< HEAD
 		if(!config.contains("servername"))
 			config.set("servername", "&6ExampleServer");
 		
@@ -106,6 +110,13 @@ public class ConfigManager {
 			lang.set("language.go", "&3GO!");
 		}
 		save();
+=======
+		scoreFile = new File(pl.getDataFolder(), "scores.yml");
+		score = YamlConfiguration.loadConfiguration(scoreFile);
+		
+		config.addDefault("servername", "&6ExampleServer");
+		config.options().copyDefaults(true);
+>>>>>>> 3da9cf2f37ef1898f018053bc42f3344bd96851e
 	}
 	
 	public void setMainLobby(Location loc) {
@@ -128,6 +139,7 @@ public class ConfigManager {
 		try {
 			data.save(dataFile);
 			lang.save(langFile);
+			score.save(scoreFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -149,6 +161,12 @@ public class ConfigManager {
 		return lang;
 	}
 	
+<<<<<<< HEAD
+=======
+	public FileConfiguration getScoreFile() {
+		return score;
+	}
+>>>>>>> 3da9cf2f37ef1898f018053bc42f3344bd96851e
 	
 	public FileConfiguration getConfigFile() {
 		return config;
