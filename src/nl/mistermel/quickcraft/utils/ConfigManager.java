@@ -21,6 +21,9 @@ public class ConfigManager {
 	private File langFile;
 	private FileConfiguration lang;
 	
+	private File scoreFile;
+	private FileConfiguration score;
+	
 	private QuickCraft pl;
 	
 	public ConfigManager() {
@@ -34,6 +37,9 @@ public class ConfigManager {
 		
 		langFile = new File(pl.getDataFolder(), "data.yml");
 		lang = YamlConfiguration.loadConfiguration(langFile);
+		
+		scoreFile = new File(pl.getDataFolder(), "scores.yml");
+		score = YamlConfiguration.loadConfiguration(scoreFile);
 		
 		config.addDefault("servername", "&6ExampleServer");
 		config.options().copyDefaults(true);
@@ -59,6 +65,7 @@ public class ConfigManager {
 		try {
 			data.save(dataFile);
 			lang.save(langFile);
+			score.save(scoreFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -74,6 +81,10 @@ public class ConfigManager {
 	
 	public FileConfiguration getLangFile() {
 		return lang;
+	}
+	
+	public FileConfiguration getScoreFile() {
+		return score;
 	}
 	
 	public FileConfiguration getConfigFile() {

@@ -64,6 +64,7 @@ public class LanguageManager {
 		lang.addDefault("language.set-amount-of-rounds", "Set the amount of rounds.");
 		lang.addDefault("language.toggle-arena", "Toggle an arena.");
 		lang.addDefault("language.delete-arena", "Delete an arena.");
+		lang.addDefault("language.show-stats", "Shows you your game stats.");
 		lang.addDefault("language.cant-do-this", "&cYou can't do this while in a game!");
 		lang.addDefault("language.not-enough-players", "&cCountdown cancelled. Not enough players anymore!");
 		lang.addDefault("language.left", "&cYou left the game.");
@@ -81,6 +82,8 @@ public class LanguageManager {
 		lang.addDefault("language.rounds-left", "&6Everybody finished! There are %rounds% rounds left!");
 		lang.addDefault("language.starting-countdown", "&6Starting countdown!");
 		lang.addDefault("language.go", "&3GO!");
+		lang.addDefault("language.no-stats", "&4You haven't won any game!");
+		lang.addDefault("language.stats", "&cYou currently have won&2 %games% &cGames. Congratz!");
 		lang.options().copyDefaults(true);
 		QuickCraft.getConfigManager().save();
 	}
