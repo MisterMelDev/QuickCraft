@@ -1,5 +1,8 @@
 package nl.mistermel.quickcraft.utils;
 
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import net.md_5.bungee.api.ChatColor;
@@ -11,8 +14,10 @@ public class LanguageManager {
 	
 	public LanguageManager() {
 		lang = QuickCraft.getConfigManager().getLangFile();
-<<<<<<< HEAD
-=======
+		
+		for(String key : lang.getConfigurationSection("language").getKeys(false)) {
+			Bukkit.getLogger().log(Level.INFO, lang.getString("language." + key));
+		}
 		
 		addDefaults();
 	}
@@ -85,16 +90,15 @@ public class LanguageManager {
 		lang.addDefault("language.starting-countdown", "&6Starting countdown!");
 		lang.addDefault("language.go", "&3GO!");
 		lang.addDefault("language.no-stats", "&4You haven't won any game!");
-		lang.addDefault("language.stats", "&cYou currently have won&2 %games% &cGames. Congratz!");
+		lang.addDefault("language.stats", "&cYou currently have won&2 %games% &cgames. Congrats!");
 		lang.options().copyDefaults(true);
 		QuickCraft.getConfigManager().save();
->>>>>>> 3da9cf2f37ef1898f018053bc42f3344bd96851e
 	}
 	
 	public String getTranslation(String key) {
-		if(!lang.contains(key)) {
+		if(lang.contains(key)) {
 			return ChatColor.RED + "Message undefined.";
 		}
-		return " " + ChatColor.translateAlternateColorCodes('&', lang.getString("language." + key));
+		return ChatColor.translateAlternateColorCodes('&', lang.getString("language." + key));
 	}
 }
