@@ -136,10 +136,11 @@ public class QuickCraft extends JavaPlugin {
 			}
 			if(args[0].equalsIgnoreCase("stats")) {
 				if(!configManager.getScoreFile().contains("players." + sender.getName() + ".wins")) {
-					sender.sendMessage(PREFIX + langManager.getTranslation("language.no-stats"));
+					sender.sendMessage(PREFIX + langManager.getTranslation("no-stats"));
 				} else {
-					sender.sendMessage(PREFIX + langManager.getTranslation("language.stats").replaceAll("%games%", configManager.getScoreFile().getString("players." + sender.getName() + ".wins")));
+					sender.sendMessage(PREFIX + langManager.getTranslation("stats").replaceAll("%games%", configManager.getScoreFile().getString("players." + sender.getName() + ".wins")));
 				}
+				return true;
 			}
 			if(args[0].equalsIgnoreCase("leave")) {
 				if(!(sender instanceof Player)) {

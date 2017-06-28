@@ -1,8 +1,5 @@
 package nl.mistermel.quickcraft.utils;
 
-import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import net.md_5.bungee.api.ChatColor;
@@ -14,10 +11,6 @@ public class LanguageManager {
 	
 	public LanguageManager() {
 		lang = QuickCraft.getConfigManager().getLangFile();
-		
-		for(String key : lang.getConfigurationSection("language").getKeys(false)) {
-			Bukkit.getLogger().log(Level.INFO, lang.getString("language." + key));
-		}
 		
 		addDefaults();
 	}
@@ -89,8 +82,8 @@ public class LanguageManager {
 		lang.addDefault("language.rounds-left", "&6Everybody finished! There are %rounds% rounds left!");
 		lang.addDefault("language.starting-countdown", "&6Starting countdown!");
 		lang.addDefault("language.go", "&3GO!");
-		lang.addDefault("language.no-stats", "&4You haven't won any game!");
-		lang.addDefault("language.stats", "&cYou currently have won&2 %games% &cgames. Congrats!");
+		lang.addDefault("language.no-stats", "&cYou haven't won any game!");
+		lang.addDefault("language.stats", "&6You currently have won &2%games% &6games. Congrats!");
 		lang.options().copyDefaults(true);
 		QuickCraft.getConfigManager().save();
 	}
