@@ -47,14 +47,14 @@ public class SignManager implements Listener {
 				return;
 			}
 			String name = e.getLine(2);
-			if(!ArenaManager.exists(name)) {
+			if(!QuickCraft.getArenaManager().exists(name)) {
 				p.sendMessage(QuickCraft.PREFIX + ChatColor.RED + "That arena doesn't exist.");
 				e.setCancelled(true);
 				return;
 			}
 			e.setLine(0, ChatColor.AQUA + "QuickCraft");
 			e.setLine(1, ChatColor.GOLD + name);
-			e.setLine(2, ArenaManager.getArena(name).getState().getDisplayText().toString());
+			e.setLine(2, QuickCraft.getArenaManager().getArena(name).getState().getDisplayText().toString());
 			return;
 		}
 		e.setCancelled(true);
@@ -73,8 +73,8 @@ public class SignManager implements Listener {
 					}
 					String name = ChatColor.stripColor(s.getLine(1));
 					e.getPlayer().performCommand("qc join " + name);
-					updateSign(e.getClickedBlock().getLocation(), ArenaManager.getArena(name));
-					ArenaManager.setSign(e.getClickedBlock().getLocation(), name);
+					updateSign(e.getClickedBlock().getLocation(), QuickCraft.getArenaManager().getArena(name));
+					QuickCraft.getArenaManager().setSign(e.getClickedBlock().getLocation(), name);
 				}
 			}
 		}

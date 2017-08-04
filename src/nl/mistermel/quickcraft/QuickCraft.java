@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.md_5.bungee.api.ChatColor;
+import nl.mistermel.quickcraft.metrics.Metrics;
 import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
 import nl.mistermel.quickcraft.utils.LanguageManager;
@@ -24,6 +25,9 @@ public class QuickCraft extends JavaPlugin {
 	private static ConfigManager configManager;
 	private static SignManager signManager;
 	private static LanguageManager langManager;
+	private static ArenaManager arenaManager;
+	
+	private Metrics metrics;
 	
 	public static final String PREFIX = ChatColor.AQUA + "QuickCraft" + ChatColor.GRAY + " >> ";
 	
@@ -33,16 +37,26 @@ public class QuickCraft extends JavaPlugin {
 		configManager = new ConfigManager();
 		signManager = new SignManager();
 		langManager = new LanguageManager();
+		arenaManager = new ArenaManager();
 		
 		getServer().getPluginManager().registerEvents(new Events(), this);
 		getServer().getPluginManager().registerEvents(new ArenaManager(), this);
 		getServer().getPluginManager().registerEvents(new SignManager(), this);
 		
+		metrics = new Metrics(this);
+		
+		metrics.addCustomChart(new Metrics.SimplePie("arena_amount") {
+			@Override
+			public String getValue() {
+				return Integer.toString(arenaManager.getArenas().size());
+			}
+		});
+		
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ArenaManager(), 0, 20);
 	}
 	
 	public void onDisable() {
-		for(Arena arena : ArenaManager.getArenas()) {
+		for(Arena arena : arenaManager.getArenas()) {
 			for(Player p : arena.getPlayers()) {
 				arena.leave(p);
 			}
@@ -93,11 +107,11 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("nomainlobby"));
 					return true;
 				}
-				if(ArenaManager.exists(args[1])) {
+				if(arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-already-exists"));
 					return true;
 				}
-				ArenaManager.createArena(args[1]);
+				arenaManager.createArena(args[1]);
 				sender.sendMessage(PREFIX + langManager.getTranslation("arena-created"));
 				sender.sendMessage(PREFIX + langManager.getTranslation("things-you-should-do-now"));
 				sender.sendMessage(PREFIX + langManager.getTranslation("set-the-lobby").replaceAll("%arena%", args[1]));
@@ -117,7 +131,7 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setlobby <Arena>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
@@ -125,12 +139,12 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("onlyplayer"));
 					return true;
 				}
-				if(ArenaManager.isEnabled(args[1])) {
+				if(arenaManager.isEnabled(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				Player p = (Player) sender;
-				ArenaManager.setLobby(args[1], p.getLocation());
+				arenaManager.setLobby(args[1], p.getLocation());
 				sender.sendMessage(PREFIX + langManager.getTranslation("lobby-set"));
 				return true;
 			}
@@ -148,11 +162,11 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				Player p = (Player) sender;
-				if(!ArenaManager.isInGame(p)) {
+				if(!arenaManager.isInGame(p)) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("not-in-game"));
 					return true;
 				}
-				ArenaManager.getArena(p).leave(p);
+				arenaManager.getArena(p).leave(p);
 				return true;
 			}
 			if(args[0].equalsIgnoreCase("setspawn")) {
@@ -164,7 +178,7 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setspawn <Arena>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
@@ -172,12 +186,12 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("onlyplayer"));
 					return true;
 				}
-				if(ArenaManager.isEnabled(args[1])) {
+				if(arenaManager.isEnabled(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
 				Player p = (Player) sender;
-				ArenaManager.setSpawn(args[1], p.getLocation());
+				arenaManager.setSpawn(args[1], p.getLocation());
 				sender.sendMessage(PREFIX + langManager.getTranslation("spawn-set"));
 				return true;
 			}
@@ -190,20 +204,20 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc toggle <Arena>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
-				boolean toggled = ArenaManager.isEnabled(args[1]);
+				boolean toggled = arenaManager.isEnabled(args[1]);
 				if(toggled) {
-					ArenaManager.setEnabled(args[1], false);
+					arenaManager.setEnabled(args[1], false);
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-disabled"));
 				} else {
-					if(!ArenaManager.isCompleted(args[1])) {
+					if(!arenaManager.isCompleted(args[1])) {
 						sender.sendMessage(PREFIX + langManager.getTranslation("not-completed"));
 						return true;
 					}
-					ArenaManager.setEnabled(args[1], true);
+					arenaManager.setEnabled(args[1], true);
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 				}
 				return true;
@@ -218,15 +232,15 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc join <Arena>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
-				if(ArenaManager.isInGame(p)) {
+				if(arenaManager.isInGame(p)) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("already-in-game"));
 					return true;
 				}
-				if(!ArenaManager.join(args[1], p)) {
+				if(!arenaManager.join(args[1], p)) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("not-joinable"));
 				} else {
 					sender.sendMessage(PREFIX + langManager.getTranslation("joined-game"));
@@ -256,7 +270,7 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setmin <Arena> <Amount>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
@@ -264,7 +278,7 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("enter-valid-number"));
 					return true;
 				}
-				if(ArenaManager.isEnabled(args[1])) {
+				if(arenaManager.isEnabled(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
@@ -272,7 +286,7 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("min-too-low"));
 					return true;
 				}
-				ArenaManager.setMinPlayers(args[1], Integer.parseInt(args[2]));
+				arenaManager.setMinPlayers(args[1], Integer.parseInt(args[2]));
 				sender.sendMessage(PREFIX + langManager.getTranslation("min-set"));
 				return true;
 			}
@@ -285,7 +299,7 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setmax <Arena> <Amount>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
@@ -293,11 +307,11 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("enter-valid-number"));
 					return true;
 				}
-				if(ArenaManager.isEnabled(args[1])) {
+				if(arenaManager.isEnabled(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
-				ArenaManager.setMaxPlayers(args[1], Integer.parseInt(args[2]));
+				arenaManager.setMaxPlayers(args[1], Integer.parseInt(args[2]));
 				sender.sendMessage(PREFIX + langManager.getTranslation("max-set"));
 				return true;
 			}
@@ -307,7 +321,7 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				StringBuilder str = new StringBuilder();
-				for(Arena arena : ArenaManager.getArenas()) {
+				for(Arena arena : arenaManager.getArenas()) {
 					String name = arena.getName();
 					str.append(name + ", ");
 				}
@@ -323,7 +337,7 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc setrounds <Arena> <Amount>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
@@ -331,11 +345,11 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("enter-valid-number"));
 					return true;
 				}
-				if(ArenaManager.isEnabled(args[1])) {
+				if(arenaManager.isEnabled(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
-				ArenaManager.getArena(args[1]).setRounds(Integer.parseInt(args[2]));
+				arenaManager.getArena(args[1]).setRounds(Integer.parseInt(args[2]));
 				sender.sendMessage(PREFIX + langManager.getTranslation("rounds-set"));
 				return true;
 			}
@@ -348,11 +362,11 @@ public class QuickCraft extends JavaPlugin {
 					sender.sendMessage(PREFIX + langManager.getTranslation("usage").replaceAll("%command%", "/qc remove <Arena>"));
 					return true;
 				}
-				if(!ArenaManager.exists(args[1])) {
+				if(!arenaManager.exists(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-doesnt-exist"));
 					return true;
 				}
-				if(ArenaManager.isEnabled(args[1])) {
+				if(arenaManager.isEnabled(args[1])) {
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-enabled"));
 					return true;
 				}
@@ -361,7 +375,7 @@ public class QuickCraft extends JavaPlugin {
 					return true;
 				}
 				if(args[2].equalsIgnoreCase("confirm")) {
-					ArenaManager.remove(args[1]);
+					arenaManager.remove(args[1]);
 					sender.sendMessage(PREFIX + langManager.getTranslation("arena-removed"));
 				}
 				return true;
@@ -410,5 +424,9 @@ public class QuickCraft extends JavaPlugin {
 	
 	public static LanguageManager getLanguageManager() {
 		return langManager;
+	}
+	
+	public static ArenaManager getArenaManager() {
+		return arenaManager;
 	}
 }

@@ -62,8 +62,8 @@ public class Arena {
 		this.rounds = rounds;
 
 		this.state = GameState.WAITING;
-		if (ArenaManager.signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
+		if (QuickCraft.getArenaManager().signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
 		}
 		this.scheduler = Bukkit.getServer().getScheduler();
 		this.configManager = QuickCraft.getConfigManager();
@@ -111,8 +111,8 @@ public class Arena {
 			setExp(countdown);
 			if (countdown <= 0) {
 				state = GameState.IN_GAME;
-				if (ArenaManager.signCreated(name)) {
-					QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
+				if (QuickCraft.getArenaManager().signCreated(name)) {
+					QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
 				}
 				sendMessage(langManager.getTranslation("starting"));
 				for (String score : board.getEntries()) {
@@ -314,8 +314,8 @@ public class Arena {
 		if (state == GameState.WAITING) {
 			if (players.size() >= minPlayers) {
 				state = GameState.STARTING;
-				if (ArenaManager.signCreated(name)) {
-					QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
+				if (QuickCraft.getArenaManager().signCreated(name)) {
+					QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
 				}
 				sendMessage(langManager.getTranslation("starting-countdown"));
 			}
@@ -337,8 +337,8 @@ public class Arena {
 		p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 		p.getInventory().clear();
 
-		if (ArenaManager.signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
+		if (QuickCraft.getArenaManager().signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
 		}
 
 		if (players.size() < minPlayers && state == GameState.STARTING) {
@@ -371,8 +371,8 @@ public class Arena {
 
 	public void reset() {
 		this.state = GameState.RESETTING;
-		if (ArenaManager.signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
+		if (QuickCraft.getArenaManager().signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
 		}
 		for (int i = 0; i < players.size(); i++) {
 			Player p = Bukkit.getPlayer(players.get(i));
@@ -401,8 +401,8 @@ public class Arena {
 		mat = ItemUtils.getRandomMaterial();
 		round = 1;
 		this.state = GameState.WAITING;
-		if (ArenaManager.signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(ArenaManager.getSign(name), this);
+		if (QuickCraft.getArenaManager().signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
 		}
 	}
 

@@ -19,9 +19,9 @@ import nl.mistermel.quickcraft.QuickCraft;
 
 public class ArenaManager implements Runnable, Listener {
 	
-	private static Map<String, Arena> arenas = new HashMap<String, Arena>();
+	private Map<String, Arena> arenas = new HashMap<String, Arena>();
 	
-	private static FileConfiguration data;
+	private FileConfiguration data;
 	
 	public ArenaManager() {
 		data = QuickCraft.getConfigManager().getDataFile();
@@ -35,7 +35,7 @@ public class ArenaManager implements Runnable, Listener {
 		}
 	}
 	
-	public static void setSign(Location loc, String name) {
+	public void setSign(Location loc, String name) {
 		data.set("arenas." + name + ".sign.world", loc.getWorld().getName());
 		data.set("arenas." + name + ".sign.x", loc.getBlockX());
 		data.set("arenas." + name + ".sign.y", loc.getBlockY());
@@ -43,15 +43,15 @@ public class ArenaManager implements Runnable, Listener {
 		QuickCraft.getConfigManager().save();
 	}
 	
-	public static Location getSign(String name) {
+	public Location getSign(String name) {
 		return new Location(Bukkit.getWorld(data.getString("arenas." + name + ".sign.world")), data.getInt("arenas." + name + ".sign.x"), data.getInt("arenas." + name + ".sign.y"), data.getInt("arenas." + name + ".sign.z"));
 	}
 	
-	public static boolean signCreated(String name) {
+	public boolean signCreated(String name) {
 		return data.contains("arenas." + name + ".sign");
 	}
 	
-	public static Arena getArena(Player p) {
+	public Arena getArena(Player p) {
 		for(Arena arena : arenas.values()) {
 			if(arena.inGame(p)) {
 				return arena;
@@ -60,11 +60,11 @@ public class ArenaManager implements Runnable, Listener {
 		return null;
 	}
 	
-	public static Arena getArena(String name) {
+	public Arena getArena(String name) {
 		return arenas.get(name);
 	}
 	
-	public static boolean isInGame(Player p) {
+	public boolean isInGame(Player p) {
 		for(Arena arena : arenas.values()) {
 			if(arena.inGame(p)) {
 				return true;
@@ -86,7 +86,7 @@ public class ArenaManager implements Runnable, Listener {
 		}
 	}
 	
-	public static void refreshConfig() {
+	public void refreshConfig() {
 		save();
 		for(Arena arena : arenas.values()) {
 			for(Player p : arena.getPlayers()) {
@@ -104,11 +104,11 @@ public class ArenaManager implements Runnable, Listener {
 		}
 	}
 	
-	public static Collection<Arena> getArenas() {
+	public Collection<Arena> getArenas() {
 		return arenas.values();
 	}
 	
-	public static void setEnabled(String name, boolean enabled) {
+	public void setEnabled(String name, boolean enabled) {
 		data.set("arenas." + name + ".enabled", enabled);
 		Arena arena = arenas.get(name);
 		arena.setEnabled(enabled);
@@ -119,7 +119,7 @@ public class ArenaManager implements Runnable, Listener {
 		QuickCraft.getConfigManager().save();
 	}
 	
-	private static void save() {
+	private void save() {
 		try {
 			for(String name : arenas.keySet()) {
 				Arena arena = arenas.get(name);
@@ -146,52 +146,52 @@ public class ArenaManager implements Runnable, Listener {
 		}
 	}
 	
-	public static void remove(String name) {
+	public void remove(String name) {
 		data.set("arenas." + name, null);
 		arenas.remove(name);
 		save();
 	}
 	
-	public static boolean join(String name, Player p) {
+	public boolean join(String name, Player p) {
 		Arena arena = arenas.get(name);
 		return arena.join(p);
 	}
 	
-	public static void createArena(String name) {
+	public void createArena(String name) {
 		Location emptyLoc = new Location(Bukkit.getWorld("world"), 0, 0, 0);
 		arenas.put(name, new Arena(emptyLoc, emptyLoc, false, name, 2, 10, 3));
 		save();
 	}
 	
-	public static void setMinPlayers(String name, int value) {
+	public void setMinPlayers(String name, int value) {
 		arenas.get(name).setMinPlayers(value);
 	}
 	
-	public static void setMaxPlayers(String name, int value) {
+	public void setMaxPlayers(String name, int value) {
 		arenas.get(name).setMaxPlayers(value);
 	}
 	
-	public static void setLobby(String name, Location loc) {
+	public void setLobby(String name, Location loc) {
 		arenas.get(name).setLobbyLocation(loc);
 		save();
 	}
 	
-	public static void setSpawn(String name, Location loc) {
+	public void setSpawn(String name, Location loc) {
 		arenas.get(name).setSpawnLocation(loc);
 		save();
 	}
 	
-	public static boolean exists(String name) {
+	public boolean exists(String name) {
 		return arenas.containsKey(name);
 	}
 	
-	public static boolean isCompleted(String name) {
+	public boolean isCompleted(String name) {
 		Location spawn = arenas.get(name).getSpawnLocation();
 		Location lobby = arenas.get(name).getLobbyLocation();
 		return spawn.getX() != 0 && spawn.getY() != 0 && spawn.getZ() != 0 && lobby.getX() != 0 && lobby.getY() != 0 && lobby.getZ() != 0;
 	}
 	
-	public static boolean isEnabled(String name) {
+	public boolean isEnabled(String name) {
 		return arenas.get(name).isEnabled();
 	}
 	
