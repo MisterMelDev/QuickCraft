@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.md_5.bungee.api.ChatColor;
-import nl.mistermel.quickcraft.metrics.Metrics;
+import nl.mistermel.quickcraft.api.Metrics;
 import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
 import nl.mistermel.quickcraft.utils.LanguageManager;
@@ -26,8 +26,6 @@ public class QuickCraft extends JavaPlugin {
 	private static SignManager signManager;
 	private static LanguageManager langManager;
 	private static ArenaManager arenaManager;
-	
-	private Metrics metrics;
 	
 	public static final String PREFIX = ChatColor.AQUA + "QuickCraft" + ChatColor.GRAY + " >> ";
 	
@@ -43,14 +41,7 @@ public class QuickCraft extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ArenaManager(), this);
 		getServer().getPluginManager().registerEvents(new SignManager(), this);
 		
-		metrics = new Metrics(this);
-		
-		metrics.addCustomChart(new Metrics.SimplePie("arena_amount") {
-			@Override
-			public String getValue() {
-				return Integer.toString(arenaManager.getArenas().size());
-			}
-		});
+		new Metrics(this);
 		
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ArenaManager(), 0, 20);
 	}

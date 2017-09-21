@@ -21,7 +21,6 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import com.google.common.collect.Iterables;
 
-import nl.mistermel.quickcraft.utils.ArenaManager;
 import nl.mistermel.quickcraft.utils.ConfigManager;
 import nl.mistermel.quickcraft.utils.GameState;
 import nl.mistermel.quickcraft.utils.ItemUtils;
@@ -62,20 +61,19 @@ public class Arena {
 		this.rounds = rounds;
 
 		this.state = GameState.WAITING;
-		if (QuickCraft.getArenaManager().signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
-		}
-		this.scheduler = Bukkit.getServer().getScheduler();
-		this.configManager = QuickCraft.getConfigManager();
-		this.langManager = QuickCraft.getLanguageManager();
-		this.mat = ItemUtils.getRandomMaterial();
-		this.pl = QuickCraft.getInstance();
+		
+		this.initialVariableSetup();
+		this.scoreboardCreation();
+		this.signUpdate();
+	}
+	
+	private void scoreboardCreation() {
 		this.board = Bukkit.getScoreboardManager().getNewScoreboard();
 		this.obj = board.registerNewObjective("QC" + name, "");
 
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		obj.setDisplayName(ChatColor.AQUA + "QuickCraft");
-
+		
 		Score filler1 = obj.getScore(ChatColor.GRAY + "");
 		filler1.setScore(3);
 
@@ -87,6 +85,20 @@ public class Arena {
 
 		Score serverName = obj.getScore(ChatColor.translateAlternateColorCodes('&', configManager.getConfigFile().getString("servername")));
 		serverName.setScore(0);
+	}
+	
+	private void initialVariableSetup() {
+		this.scheduler = Bukkit.getServer().getScheduler();
+		this.configManager = QuickCraft.getConfigManager();
+		this.langManager = QuickCraft.getLanguageManager();
+		this.mat = ItemUtils.getRandomMaterial();
+		this.pl = QuickCraft.getInstance();
+	}
+	
+	private void signUpdate() {
+		if (QuickCraft.getArenaManager().signCreated(name)) {
+			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
+		}
 	}
 
 	public void tick() {
@@ -111,9 +123,8 @@ public class Arena {
 			setExp(countdown);
 			if (countdown <= 0) {
 				state = GameState.IN_GAME;
-				if (QuickCraft.getArenaManager().signCreated(name)) {
-					QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
-				}
+				
+				this.signUpdate();
 				sendMessage(langManager.getTranslation("starting"));
 				for (String score : board.getEntries()) {
 					board.resetScores(score);
@@ -133,34 +144,16 @@ public class Arena {
 
 				setExp(0);
 				teleport(spawnLoc);
-
-				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
-					public void run() {
-						sendTitle(ChatColor.GREEN + "3", langManager.getTranslation("subtitle"));
-					}
-				}, 20);
-
-				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
-					public void run() {
-						sendTitle(ChatColor.YELLOW + "2", langManager.getTranslation("subtitle"));
-					}
-				}, 40);
-
-				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
-					public void run() {
-						sendTitle(ChatColor.YELLOW + "1", langManager.getTranslation("subtitle"));
-					}
-				}, 60);
+				
+				this.finalCountdown();
 
 				scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
 					public void run() {
 						sendTitle(langManager.getTranslation("go"), langManager.getTranslation("item").replaceAll("%item%", mat.name()));
 						sendMessage(langManager.getTranslation("item").replaceAll("%item%", mat.name()));
-						for (UUID u : players) {
-							Player p = Bukkit.getPlayer(u);
-							for (ItemStack item : ItemUtils.getIngredients(mat)) {
-								p.getInventory().addItem(item);
-							}
+						
+						for (ItemStack item : ItemUtils.getIngredients(mat)) {
+							giveItem(item);
 						}
 
 						for (String score : board.getEntries()) {
@@ -180,19 +173,39 @@ public class Arena {
 						serverName.setScore(0);
 
 					}
-				}, 60);
+				}, 80);
 
 				return;
 			}
-			if (countdown % 10 == 0) {
-				sendMessage(langManager.getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown)));
-				makeSound(Sound.BLOCK_NOTE_PLING);
-			}
-			if (countdown <= 5) {
-				sendMessage(langManager.getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown)));
-				makeSound(Sound.BLOCK_NOTE_PLING);
-			}
+			this.updateCountdown();
 		}
+	}
+	
+	private void updateCountdown() {
+		if(countdown % 10 == 0 || countdown <= 5) {
+			sendMessage(langManager.getTranslation("countdown").replaceAll("%seconds%", Integer.toString(countdown)));
+			makeSound(Sound.BLOCK_NOTE_PLING);
+		}
+	}
+	
+	private void finalCountdown() {
+		scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+			public void run() {
+				sendTitle(ChatColor.GREEN + "3", langManager.getTranslation("subtitle"));
+			}
+		}, 20);
+
+		scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+			public void run() {
+				sendTitle(ChatColor.YELLOW + "2", langManager.getTranslation("subtitle"));
+			}
+		}, 40);
+
+		scheduler.scheduleSyncDelayedTask(pl, new Runnable() {
+			public void run() {
+				sendTitle(ChatColor.YELLOW + "1", langManager.getTranslation("subtitle"));
+			}
+		}, 60);
 	}
 
 	public Material getItemType() {
@@ -314,9 +327,7 @@ public class Arena {
 		if (state == GameState.WAITING) {
 			if (players.size() >= minPlayers) {
 				state = GameState.STARTING;
-				if (QuickCraft.getArenaManager().signCreated(name)) {
-					QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
-				}
+				this.signUpdate();
 				sendMessage(langManager.getTranslation("starting-countdown"));
 			}
 		}
@@ -337,9 +348,7 @@ public class Arena {
 		p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 		p.getInventory().clear();
 
-		if (QuickCraft.getArenaManager().signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
-		}
+		this.signUpdate();
 
 		if (players.size() < minPlayers && state == GameState.STARTING) {
 			state = GameState.WAITING;
@@ -371,9 +380,7 @@ public class Arena {
 
 	public void reset() {
 		this.state = GameState.RESETTING;
-		if (QuickCraft.getArenaManager().signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
-		}
+		this.signUpdate();
 		for (int i = 0; i < players.size(); i++) {
 			Player p = Bukkit.getPlayer(players.get(i));
 			p.teleport(configManager.getMainLobby());
@@ -401,9 +408,7 @@ public class Arena {
 		mat = ItemUtils.getRandomMaterial();
 		round = 1;
 		this.state = GameState.WAITING;
-		if (QuickCraft.getArenaManager().signCreated(name)) {
-			QuickCraft.getSignManager().updateSign(QuickCraft.getArenaManager().getSign(name), this);
-		}
+		this.signUpdate();
 	}
 
 	public void makeSound(Sound sound) {
@@ -446,6 +451,13 @@ public class Arena {
 		for (UUID u : players) {
 			Player p = Bukkit.getPlayer(u);
 			p.teleport(loc);
+		}
+	}
+	
+	public void giveItem(ItemStack item) {
+		for(UUID u : players) {
+			Player p = Bukkit.getPlayer(u);
+			p.getInventory().addItem(item);
 		}
 	}
 

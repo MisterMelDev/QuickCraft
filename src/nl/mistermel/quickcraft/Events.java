@@ -11,8 +11,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import nl.mistermel.quickcraft.utils.ArenaManager;
-
 public class Events implements Listener {
 	
 	@EventHandler

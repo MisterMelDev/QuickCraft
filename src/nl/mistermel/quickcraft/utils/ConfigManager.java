@@ -42,12 +42,6 @@ public class ConfigManager {
 		score = YamlConfiguration.loadConfiguration(scoreFile);
 		
 		config.addDefault("servername", "&6ExampleServer");
-		config.addDefault("sql.enabled", false);
-		config.addDefault("sql.host", "localhost");
-		config.addDefault("sql.port", 3306);
-		config.addDefault("sql.database", "playerdata");
-		config.addDefault("sql.username", "user123");
-		config.addDefault("sql.password", "pass123");
 		config.options().copyDefaults(true);
 		
 		save();

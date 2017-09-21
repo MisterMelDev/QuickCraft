@@ -1,4 +1,4 @@
-package nl.mistermel.quickcraft.metrics;
+package nl.mistermel.quickcraft.api;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
